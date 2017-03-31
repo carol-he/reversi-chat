@@ -1,10 +1,30 @@
-var app = require('express')();
-var server = require('http').Server(app);
-var io = require('socket.io')(server);
+const db = require( './db' );
+const app = require('express')();
+const path = require('path');
+const bodyParser = require('body-parser');
+const server = require('http').Server(app);
+const io = require('socket.io')(server);
 
-server.listen(80);
+app.set('views', path.join(__dirname, 'views'));
+app.set('view engine', 'hbs');
+
+app.use(bodyParser.urlencoded({ extended: false }));
+
+app.use(express.static(path.join(__dirname, 'public')));
+
+app.get('/login', function (req, res) {
+  res.sendfile(__dirname + '/index.html');
+});
+
+app.get('/register', function (req, res) {
+  res.sendfile(__dirname + '/index.html');
+});
 
 app.get('/', function (req, res) {
+  res.sendfile(__dirname + '/index.html');
+});
+
+app.get('/leaderboard', function (req, res) {
   res.sendfile(__dirname + '/index.html');
 });
 
@@ -14,4 +34,5 @@ io.on('connection', function (socket) {
     console.log(data);
   });
 });
-     
+
+app.listen(8080);

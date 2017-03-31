@@ -1,5 +1,3 @@
-The content below is an example project proposal / requirements document. Replace the text below the lines marked "__TODO__" with details specific to your project. Remove the "TODO" lines.
-
 # ReversiChat
 
 ## Overview
@@ -97,17 +95,16 @@ An Example Game:
     * I'm going to be using passport for user authentication
     * And account has been made for testing; I'll email you the password
 * (4 points) Perform client side form validation using a JavaScript library
-    * to make sure
+    * to make sure email is correctly formatted
+    * possibly to make sure moves are valid?
 * (2 points) Socket.io
     * enables real-time bidirectional event-based communication
     * want to use this to send messages back and forth from client to server to client
-9 points total out of 8 required points
+11 points total out of 8 required points
 
 
 ## [Link to Initial Main Project File](app.js)
 
 ## Annotations / References Used
 
-
 1. [socket.io](https://socket.io/docs) - (add link to source code that was based on this)
-2. [tutorial on vue.js](https://vuejs.org/v2/guide/) - (add link to source code that was based on this)
