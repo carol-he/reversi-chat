@@ -1,0 +1,14 @@
+<h1>480 news!</h1>
+{{#each links as |link|}}
+<div>0{{@index}}. <a href ='//{{url}}'>{{title}}</a>, <a href='/{{slug}}'>[comments]</a> {{votes}} votes</div>
+<form method="POST" action="/vote" id="voteform">
+	<input type="hidden" name="slug" value="{{slug}}">
+	<input type="hidden" name="votes" value="{{votes}}">
+	<input type="submit" value="upvote">
+</form>
+{{/each}}
+<form method="POST" action="/form">
+	URL: <input type="text" name="url" value="">
+	Title: <input type="text" name="title" value="">
+	<input type="submit">
+</form>

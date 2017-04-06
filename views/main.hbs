@@ -1,0 +1,11 @@
+<h1>Home</h1>
+{{user}}
+{{#if inSession}}
+  Currently logged in as: {{inSession}}<br>
+  <a href='/logout'>Logout</a>
+{{else}}
+  Not logged in. <a href='/register'>Register</a> or <a href='/login'>Login</a>
+{{/if}}
+<br>
+Try checking out the <a href='/restricted'>page that requires authentication</a>
+<br>
