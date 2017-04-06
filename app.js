@@ -4,7 +4,7 @@ const session = require('express-session');
 const app = require('express')();
 const bodyParser = require('body-parser');
 const server = require('http').Server(app);
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 const io = require('socket.io')(server);
 
 app.use(bodyParser.urlencoded({ extended: false }));
