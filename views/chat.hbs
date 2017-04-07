@@ -1,9 +1,11 @@
 <div id="wrapper">
+  <div id="anotherwrapper">
+      <img id="headerimg" src="hellothere.jpg" alt="hello there">
     <div id="chat">
         <div id="messagebox">
             <div id="message-inner-box">
                 <ul id="messages">
-                    <li>server: Welcome!!</li>
+                    <li><b>server</b>: Welcome!!</li>
                 </ul>
             </div>
         </div>
@@ -24,16 +26,17 @@
             <a href="/logout">logout</a>
         </div>
     </div>
+  </div>
 </div>
-<script src="/socket.io/socket.io.js"></script>
-<script src="https://code.jquery.com/jquery-1.11.1.js"></script>
 <script>
+let name = document.createElement('b');
+name.innerHTML = '{{inSession}}';
   $(function () {
     const socket = io();
     $('form').submit(function(){
       const $cont = $('#message-inner-box');
       $cont[0].scrollTop = $cont[0].scrollHeight;
-      socket.emit('chat message', "{{inSession}}: " + $('#m').val());
+      socket.emit('chat message', '<b>{{inSession}}</b>' + ": " + $('#m').val());
       $('#m').val('');
       $('#m').keyup(function(e) {
           if (e.keyCode === 13) {
@@ -46,12 +49,12 @@
       return false;
     });
     socket.on('chat message', function(msg){
-      $('#messages').append($('<li>').text(msg));
+      $('#messages').append($('<li>').html(msg));
     });
+    //notify when connected?
     var chat = io.connect('/')
     chat.on('connect', function () {
       chat.emit('hi!');
     });
   });
-
 </script>

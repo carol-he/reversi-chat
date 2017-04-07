@@ -1,9 +1,19 @@
 #wrapper {
     text-align: center;
 }
+#anotherwrapper{
+    display: inline-block;
+    width: 800px;
+}
+
+#headerimg{
+    display: inline-block;
+    float: left;
+    padding-left: 17px;
+}
 #chat {
     display: inline-block;
-    margin-top: 30px;
+    margin-top: 5px;
     border-radius: 25px;
     border: 2px solid #d7e3f7;
     padding: 20px;

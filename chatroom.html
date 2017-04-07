@@ -15,49 +15,66 @@
                 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
 		</head>
 		<body>
-            <div id="wrapper">
-                <div id="chat">
-                    <div id="messagebox">
-                        <div id="messages">
-                            <ul>
-                                <li>messages here!!</li>
-                                <li>messages here!!</li>
-                                <li>messages here!!</li>
-                                <li>messages here!!</li>
-                                <li>messages here!!</li>
-                                <li>messages here!!</li>
-                                <li>messages here!!</li>
-                                <li>messages here!!</li>
-                                <li>messages here!!</li>
-                                <li>messages here!!</li>
-                                <li>messages here!!</li>
-                                <li>messages here!!</li>
-                                <li>messages here!!</li>
-                                <li>messages here!!</li>
-                                <li>messages here!!</li>
-                                <li>messages here!!</li>
-                                <li>messages here!!</li>
-                                <li>messages here!!</li>
-                            </ul>
-                        </div>
-                    </div>
-                    <div id="online">
-                        <p>Online:</p>
-                        <ul id="people">
-                            <li><p>Carol Chen</p></li>
-                            <li><p>Jill Xu</p></li>
-                        </ul>
-                    </div>
-                    <div id="textbox">
-                        <form method="POST" action="/messages">
-                            <input type="text" name="chat" value="">
-                        </form>
-                    </div>
-                    <div id="options">
-                        <a href="/leaderboard">leaderboard</a>
-                        <a href="/logout">logout</a>
-                    </div>
+			<div id="wrapper">
+                <div id="anotherwrapper">
+                    <img id="headerimg" src="hellothere.jpg" alt="hello there">
+					<div id="chat">
+							<div id="messagebox">
+									<div id="message-inner-box">
+											<ul id="messages">
+													<li>server: Welcome!!</li>
+											</ul>
+									</div>
+							</div>
+							<div id="online">
+									<p>Online:</p>
+									<ul id="people">
+											<li><p>Carol Chen</p></li>
+											<li><p>Jill Xu</p></li>
+									</ul>
+							</div>
+							<div id="textbox">
+									<form action="">
+											<input id="m" autocomplete="off" type="text" name="chat" value="">
+									</form>
+							</div>
+							<div id="options">
+									<a href="/leaderboard">leaderboard</a>
+									<a href="/logout">logout</a>
+							</div>
+					</div>
                 </div>
-            </div>
+			</div>
+			<script src="/socket.io/socket.io.js"></script>
+			<script src="https://code.jquery.com/jquery-1.11.1.js"></script>
+			<script>
+				$(function () {
+					const socket = io();
+					$('form').submit(function(){
+						const $cont = $('#message-inner-box');
+						$cont[0].scrollTop = $cont[0].scrollHeight;
+						socket.emit('chat message', "{{inSession}}: " + $('#m').val());
+						$('#m').val('');
+						$('#m').keyup(function(e) {
+								if (e.keyCode === 13) {
+										//$cont.append('<li>' + $(this).val() + '</li>');
+										$cont[0].scrollTop = $cont[0].scrollHeight;
+										//$('#m').val('');
+								}
+						})
+						.focus();
+						return false;
+					});
+					socket.on('chat message', function(msg){
+						$('#messages').append($('<li>').html(msg));
+					});
+					//if someone logs in, append their username
+					var online = io.connect('/')
+					online.on('connect', function () {
+						online.emit('person is online', "{{inSession}}");
+					});
+					//if someone logs out, find their username and remove it
+				});
+			</script>
 		</body>
 </html>
