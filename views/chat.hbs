@@ -1,0 +1,57 @@
+<div id="wrapper">
+    <div id="chat">
+        <div id="messagebox">
+            <div id="message-inner-box">
+                <ul id="messages">
+                    <li>server: Welcome!!</li>
+                </ul>
+            </div>
+        </div>
+        <div id="online">
+            <p>Online:</p>
+            <ul id="people">
+                <li><p>Carol Chen</p></li>
+                <li><p>Jill Xu</p></li>
+            </ul>
+        </div>
+        <div id="textbox">
+            <form action="">
+                <input id="m" autocomplete="off" type="text" name="chat" value="">
+            </form>
+        </div>
+        <div id="options">
+            <a href="/leaderboard">leaderboard</a>
+            <a href="/logout">logout</a>
+        </div>
+    </div>
+</div>
+<script src="/socket.io/socket.io.js"></script>
+<script src="https://code.jquery.com/jquery-1.11.1.js"></script>
+<script>
+  $(function () {
+    const socket = io();
+    $('form').submit(function(){
+      const $cont = $('#message-inner-box');
+      $cont[0].scrollTop = $cont[0].scrollHeight;
+      socket.emit('chat message', "{{inSession}}: " + $('#m').val());
+      $('#m').val('');
+      $('#m').keyup(function(e) {
+          if (e.keyCode === 13) {
+              //$cont.append('<li>' + $(this).val() + '</li>');
+              $cont[0].scrollTop = $cont[0].scrollHeight;
+              //$('#m').val('');
+          }
+      })
+      .focus();
+      return false;
+    });
+    socket.on('chat message', function(msg){
+      $('#messages').append($('<li>').text(msg));
+    });
+    var chat = io.connect('/')
+    chat.on('connect', function () {
+      chat.emit('hi!');
+    });
+  });
+
+</script>

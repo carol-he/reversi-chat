@@ -4,7 +4,7 @@ const URLSlugs = require('mongoose-url-slugs');
 
 const User = new mongoose.Schema({
   username: {type: String, unique: true},
-  hash: String,
+  password: String,
   email: String,
   wins: Number,
   gamesPlayed: Number,
@@ -47,7 +47,7 @@ if (process.env.NODE_ENV === 'PRODUCTION') {
  var dbconf = conf.dbconf;
 } else {
  // if we're not in PRODUCTION mode, then use
- dbconf = 'mongodb://localhost/YOUR_DATABASE_NAME_HERE';
+ dbconf = 'mongodb://localhost/chatroomproject';
 }
 
 mongoose.connect(dbconf);

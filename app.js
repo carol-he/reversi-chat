@@ -3,9 +3,9 @@ const express = require('express');
 const session = require('express-session');
 const app = require('express')();
 const bodyParser = require('body-parser');
-const server = require('http').Server(app);
-const bcrypt = require('bcryptjs');
-const io = require('socket.io')(server);
+const http = require('http').Server(app);
+const bcrypt = require('bcrypt');
+const io = require('socket.io')(http);
 
 app.use(bodyParser.urlencoded({ extended: false }));
 
@@ -31,7 +31,46 @@ const User = mongoose.model('User');
 
 app.get('/', (req, res) => {
 	console.log(req.method, req.path, "-", res.statusCode);
-  res.render('main', {inSession: req.session.username});
+  if(!req.session.username){
+    res.redirect('/login');
+    console.log(req.method, req.path, "-", res.statusCode);
+  }
+  else{
+    res.render('chat', {inSession: req.session.username});
+  }
+});
+
+app.get('/login', (req, res) => {
+  console.log(req.method, req.path, "-", res.statusCode);
+  res.render('login');
+});
+
+app.post('/login', (req, res) => {
+  console.log(req.method, req.path, "-", res.statusCode);
+  User.findOne({username: req.body.username}, (err, user) => {
+  if (!err && user) {
+    // compare with form password!
+    bcrypt.compare(req.body.password, user.password, function(err, auth) {
+      if(auth){
+        // assuming that user is the user retrieved from the database
+        req.session.regenerate((err1) => {
+          if (!err1) {
+            req.session.username = user.username;
+            res.redirect('/');
+            console.log(req.method, req.path, "-", res.statusCode);
+          } else {
+            console.log('error');
+            res.send('an error occurred, please see the server logs for more information');
+          }
+        });
+      } else {
+        res.render('error', {message: 'incorrect password'});
+      }
+    });
+  } else {
+    res.render('error', {message: 'user does not exist'});
+  }
+  });
 });
 
 app.get('/register', (req, res) => {
@@ -85,48 +124,32 @@ app.post('/register', (req, res) => {
   }
 });
 
-app.get('/login', (req, res) => {
-  console.log(req.method, req.path, "-", res.statusCode);
-  res.render('login');
+app.get('/leaderboard', function (req, res) {
+  res.render('leaderboard');
 });
 
-app.post('/login', (req, res) => {
+app.get('/logout', (req, res) => {
   console.log(req.method, req.path, "-", res.statusCode);
-  User.findOne({username: req.body.username}, (err, user) => {
-  if (!err && user) {
-    // compare with form password!
-    bcrypt.compare(req.body.password, user.password, function(err, auth) {
-      if(auth){
-        // assuming that user is the user retrieved from the database
-        req.session.regenerate((err1) => {
-          if (!err1) {
-            req.session.username = user.username;
-            res.redirect('/');
-            console.log(req.method, req.path, "-", res.statusCode);
-          } else {
-            console.log('error');
-            res.send('an error occurred, please see the server logs for more information');
-          }
-        });
-      } else {
-        res.render('error', {message: 'incorrect password'});
-      }
-    });
-  } else {
-    res.render('error', {message: 'user does not exist'});
-  }
+  req.session.destroy(function(err) {
+		if(err){
+			console.log(err);
+		}
+    res.redirect('/');
+		console.log(req.method, req.path, "-", res.statusCode);
   });
 });
 
+// io.on('connection', function (socket) {
+//   socket.emit('news', { hello: 'world' });
+//   socket.on('my other event', function (data) {
+//     console.log(data);
+//   });
+// });
 
-app.get('/leaderboard', function (req, res) {
-  res.render('login');
-});
-
-io.on('connection', function (socket) {
-  socket.emit('news', { hello: 'world' });
-  socket.on('my other event', function (data) {
-    console.log(data);
+//broadcast to everyone
+io.on('connection', function(socket){
+  socket.on('chat message', function(msg){
+    io.emit('chat message', msg);
   });
 });
 
@@ -137,4 +160,4 @@ io.on('connection', function(socket){
   });
 });
 
-app.listen(process.env.PORT || 3000);
+http.listen(process.env.PORT || 8080);

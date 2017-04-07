@@ -1,6 +1,16 @@
-<h1>Register</h1>
-<form method="POST" action="/register">
-	Username: <input type="text" name="username" value="">
-	Password: <input type="text" name="password" value="">
-	<input type="submit">
-</form>
+<div id="wrapper">
+	<div id="login">
+	<h1 style="padding-bottom: 8px">Register</h1>
+		<form method="POST" action="/register">
+		<fieldset>
+			<label for="username">Username:</label><input type="text" name="username" value="" style="width: 200px"><br>
+			<label for="email">Email:</label><input type="text" name="email" value="" style="width: 200px"><br>
+			<label for="password">Password:</label><input type="text" name="password" value="" style="width: 200px">
+		</fieldset>
+		<br>
+		<input type="submit" style="width: 100px">
+		</form>
+		<br>
+		<a href="/login">Back to login</a>
+	</div>
+</div>
