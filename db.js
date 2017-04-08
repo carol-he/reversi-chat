@@ -14,7 +14,10 @@ const User = new mongoose.Schema({
   }
 });
 // Link.plugin(URLSlugs('title'));
-
+const Online = new mongoose.Schema({
+  onlineUser: String
+  //onlineUser: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }
+});
 const Leaderboard = new mongoose.Schema({
   users: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }]// a reference to a set of user objects
 });
@@ -31,6 +34,7 @@ const Game = new mongoose.Schema({
 const x = mongoose.model('User', User);
 const y = mongoose.model('Leaderboard', Leaderboard);
 const z = mongoose.model('Game', Game);
+mongoose.model('Online', Online);
 
 // is the environment variable, NODE_ENV, set to PRODUCTION?
 if (process.env.NODE_ENV === 'PRODUCTION') {

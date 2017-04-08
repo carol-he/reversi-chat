@@ -14,6 +14,9 @@
             <ul id="people">
                 <li><p>Carol Chen</p></li>
                 <li><p>Jill Xu</p></li>
+                {{#each onlines as |online|}}
+                <li id="{{onlineUser}}"><p>{{onlineUser}}</p></li>
+                {{/each}}
             </ul>
         </div>
         <div id="textbox">
@@ -29,8 +32,6 @@
   </div>
 </div>
 <script>
-let name = document.createElement('b');
-name.innerHTML = '{{inSession}}';
   $(function () {
     const socket = io();
     $('form').submit(function(){
@@ -48,13 +49,22 @@ name.innerHTML = '{{inSession}}';
       .focus();
       return false;
     });
+    // emitting actually??
     socket.on('chat message', function(msg){
-      $('#messages').append($('<li>').html(msg));
+      $('#messages').append($('<li id="{{inSession}}">').html(msg));
     });
-    //notify when connected?
-    var chat = io.connect('/')
-    chat.on('connect', function () {
-      chat.emit('hi!');
+    //if someone logs in, append their username
+    var online = io.connect('/');
+    online.on('connect', function () {
+      online.emit('person is online', "<p>{{inSession}}</p>");
     });
+    online.on('person is online', function(msg){
+      $('#people').append($('<li>').html(msg));
+    });
+    online.on('person is offline', function(msg){
+      $("#people").remove('<li><p>{{inSession}}</p></li>');
+      $('#people').append($('<li>').html("HELLO"));
+    });
+    //if someone logs out, find their username and remove it
   });
 </script>
