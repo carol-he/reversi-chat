@@ -13,6 +13,8 @@ let isFull;
 let userPass = false;
 let computerPass = false;
 let counts;
+let messageBox;
+let message = "message";
 
 function generateElement(type, className, id, innerHTML, attrs) {
   const element = document.createElement(type);
@@ -65,23 +67,46 @@ function DisplayBoard(board, width){
       document.body.querySelectorAll('.boardRow')[i].appendChild(cell);
     }
   }
+  messagebox = generateElement('div', null, 'gameMessage', message, null);
+  document.body.appendChild(messagebox);
+}
+
+function updateMessage(message) {
+  let messageBox = document.body.querySelector('#gameMessage');
+  message =  "What's your move?";
+  let newMessageBox = generateElement('div', null, 'gameMessage', message, null);
+  messageBox.parentNode.replaceChild(newMessageBox, messageBox);
 }
 
 function UserMove(){
+  //visualize board
 	console.log(boardToString(board));
+  //see if there are valid moves
 	userArr = getValidMoves(board, color);
 	if(JSON.stringify(userArr) === JSON.stringify([])){
-		move = readlineSync.question("\n No valid moves for you, press <ENTER> to skip turn...\n>");
-		userPass = true;
+    //no valid moves, then click to skip turn.
+    let messageBox = document.body.querySelector('#gameMessage');
+    message =  "no valid moves for you, click to skip turn";
+    let newMessageBox = generateElement('div', null, 'gameMessage', message, null);
+    messageBox.parentNode.replaceChild(newMessageBox, messageBox);
+    userPass = true;
 	} else {
 		userPass = false;
-		move = readlineSync.question("\n What's your move?\n >");
-		isMoveValid = isValidMoveAlgebraicNotation(board, color, move);
+    updateMessage("What's your move?");
+    //TODO: wait for player to click a cell
+    let cells = document.querySelectorAll('.boardCell');
+    cells.forEach(function(c, i, arr) {
+      c.addEventListener('click', function(evt) {
+        move = indexToRowCol(board, i);
+      });
+    });
+      //TODO: convert move to algebraic notation
+		isMoveValid = isValidMove(board, color, move.row, move.col);
 		while(isMoveValid !== true){
 			if(isMoveValid === false){
 				console.log("Invalid Move\n");
 			}
-			move = readlineSync.question("\n What's your move?\n >");
+			//move = readlineSync.question("\n What's your move?\n >");
 			isMoveValid = isValidMoveAlgebraicNotation(board, color, move);
 		}
 		if(isMoveValid === true){
@@ -113,9 +138,11 @@ function ComputerMove(){
 function InteractiveGame() {
 	if(color === "X"){
 		opponentColor = "O";
+    console.log("color is X");
 	}
 	else{
 		opponentColor = "X";
+    console.log("color is O");
 		ComputerMove();
 	}
 	isFull = isBoardFull(board);
@@ -125,6 +152,7 @@ function InteractiveGame() {
 		ComputerMove();
 		isFull = isBoardFull(board);
 	}
+  //get and print scores
 	const counts = getLetterCounts(board);
 	console.log("Score\n====\nX: " + counts.X + "\nO: " + counts.O);
 	if(counts.X > counts.O){
@@ -254,10 +282,11 @@ function main(){
     myelement.style.display = 'none';
     //create board
     const width = document.querySelector('#width').value;
-    const color = document.querySelector('#color').value;
+    color = document.querySelector('#color').value;
     console.log("width: ", width, "color: ", color);
     ControlledGameSettings(width, color);
     DisplayBoard(board, width);
+    InteractiveGame();
   });
 }
 document.addEventListener('DOMContentLoaded', main);

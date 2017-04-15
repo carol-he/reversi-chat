@@ -109,28 +109,30 @@ input {
     display: inline-block;
     padding-right: 30px;
 }
-label{
-display:inline-block;
-width:100px;
-margin-right: 30px;
-margin-left: -170px;
-text-align:right;
-padding: 5px;
+label {
+    display:inline-block;
+    width:100px;
+    margin-right: 30px;
+    margin-left: -170px;
+    text-align:right;
+    padding: 5px;
 }
 
 input{
 
 }
-fieldset{
-border:none;
-width:500px;
-margin:0px auto;
+
+fieldset {
+    border:none;
+    width:500px;
+    margin:0px auto;
 }
-#leaderboard > table{
+
+#leaderboard > table {
     display: inline-block;
     border-right: 2px solid;
 }
-#leaderboard > td{
+#leaderboard > td {
     border: 2px;
     padding: 5px 50px;
     border-left: 2px solid;
