@@ -25,6 +25,7 @@
             </form>
         </div>
         <div id="options">
+            <a href="/gameroom">gameroom</a>
             <a href="/leaderboard">leaderboard</a>
             <a href="/logout">logout</a>
         </div>
@@ -58,12 +59,16 @@
     online.on('connect', function () {
       online.emit('person is online', "<p>{{inSession}}</p>");
     });
+    //appending online person
     online.on('person is online', function(msg){
-      $('#people').append($('<li>').html(msg));
+      $('#people').append($('<li id="' + online.id + '">').html(msg));
+      console.log("test");
     });
     online.on('person is offline', function(msg){
       $("#people").remove('<li><p>{{inSession}}</p></li>');
+      $('#' + online.id).remove()
       $('#people').append($('<li>').html("HELLO"));
+      console.log("test");
     });
     //if someone logs out, find their username and remove it
   });

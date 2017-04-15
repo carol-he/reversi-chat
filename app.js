@@ -7,6 +7,8 @@ const http = require('http').Server(app);
 const bcrypt = require('bcrypt');
 const io = require('socket.io')(http);
 const sharedsession = require("express-socket.io-session");
+const passport = require('passport');
+const flash = require('connect-flash');
 
 app.use(bodyParser.urlencoded({ extended: false }));
 
@@ -24,6 +26,9 @@ const sessionOptions = {
 	saveUninitialized: true
 };
 app.use(session(sessionOptions));
+app.use(passport.initialize());
+app.use(passport.session());
+app.use(flash());
 // io.use(sharedsession(session, {
 //     autoSave:true
 // }));
@@ -49,6 +54,14 @@ app.get('/', (req, res) => {
 			res.render('chat', {inSession: req.session.username, onlines: onlines});
 		});
   }
+});
+
+app.get('/gameRoom', (req, res) => {
+	console.log(req.method, req.path, "-", res.statusCode);
+  res.render('gameRoom');
+});
+app.post('/gameRoom', (req, res) => {
+
 });
 
 app.get('/login', (req, res) => {
@@ -163,43 +176,43 @@ io.on('connection', function(socket){
   socket.on('chat message', function(msg){
     io.emit('chat message', msg);
   });
-	// socket.on('person is online', function(msg){
-	// 	io.emit('person is online', msg);
-	// 	//console.log("req.session.usr: ", req.session.username);
-	// 	// const o = new Online({
-	// 	// 	onlineUser: req.session.username
-	// 	// });
-	// 	console.log("o", o);
-	// 	o.save((err) => {
-	// 		if(err) {
-	// 				console.log(err);
-	// 		}
-	// 	});
-	// 	Online.find({}, (err, onlines) => {
-	// 		if(err) {
-	// 			console.log(err);
-	// 		}
-	// 		console.log("ONLINES", onlines);
-	// 		//res.render('chat', {inSession: req.session.username, onlines: onlines});
-	// 	});
-	// });
-	// console.log(' has connected');
-	// socket.on('disconnect', function(msg){
-	// 	io.emit('person is offline', msg);
-	// 	console.log(' has disconnected');
-	// 	Online.find({}, (err, onlines) => {
-	// 		if(err) {
-	// 			console.log(err);
-	// 		}
-	// 		// Online.remove({onlineUser: req.session.username}, (err) => {
-	// 		// 	if(err) {
-	// 		// 		console.log(err);
-	// 		// 	}
-	// 		// 	console.log("hi");
-	// 		// });
-	// 		//res.render('chat', {inSession: req.session.username, onlines: onlines});
-	// 	});
-	// });
+	socket.on('connect', function(msg){
+		io.emit('person is online', msg);
+		console.log("req.session.usr: ", req.session.username);
+		const o = new Online({
+			onlineUser: req.session.username
+		});
+		console.log(' has connected');
+		console.log("o", o);
+		o.save((err) => {
+			if(err) {
+					console.log(err);
+			}
+		});
+		Online.find({}, (err, onlines) => {
+			if(err) {
+				console.log(err);
+			}
+			console.log("ONLINES", onlines);
+			//res.render('chat', {inSession: req.session.username, onlines: onlines});
+		});
+	});
+	socket.on('disconnect', function(msg){
+		io.emit('person is offline', msg);
+		console.log(' has disconnected');
+		Online.find({}, (err, onlines) => {
+			if(err) {
+				console.log(err);
+			}
+			// Online.remove({onlineUser: req.session.username}, (err) => {
+			// 	if(err) {
+			// 		console.log(err);
+			// 	}
+			// 	console.log("hi");
+			// });
+			//res.render('chat', {inSession: req.session.username, onlines: onlines});
+		});
+	});
 });
 
 http.listen(process.env.PORT || 8080);

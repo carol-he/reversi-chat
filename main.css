@@ -80,8 +80,9 @@ input {
 #options{
     float: right;
     padding: 7px;
-    width: 130px;
+    width: 200px;
     height: 80px;
+    font-size: 8;
 }
 
 #login {
@@ -114,7 +115,7 @@ width:100px;
 margin-right: 30px;
 margin-left: -170px;
 text-align:right;
-    padding: 5px;
+padding: 5px;
 }
 
 input{
@@ -125,12 +126,11 @@ border:none;
 width:500px;
 margin:0px auto;
 }
-
-table{
+#leaderboard > table{
     display: inline-block;
     border-right: 2px solid;
 }
-table td{
+#leaderboard > td{
     border: 2px;
     padding: 5px 50px;
     border-left: 2px solid;

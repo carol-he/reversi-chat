@@ -1,0 +1,60 @@
+html {
+  position: relative;
+  min-height: 100%;
+  text-align: center;
+}
+
+body{
+  font-family: 'Open Sans', sans-serif;
+  margin:0;
+  padding:0;
+  background-color:whitesmoke;
+  min-height: 100%;
+  line-height: 200%;
+  text-align: center;
+  background-image:url();
+}
+
+
+p {
+  line-height: 200%;
+  text-align: center;
+}
+
+h1 span {
+    font-size: 16px;
+}
+.start {
+  margin-top: 30px;
+  border-radius: 25px;
+  border: 2px solid #d7e3f7;
+  padding: 20px;
+  padding-top: 3px;
+  width: 400px;
+  height: auto;
+  background-color: #d7e3f7;
+  display: inline-block;
+  padding-right: 30px;
+}
+
+.start label {
+display:inline-block;
+width:300px;
+margin-right: 30px;
+margin-left: -270px;
+text-align:right;
+padding: 5px;
+}
+
+#board {
+    margin-top: 100px;
+    display: inline-block;
+    border: 2px solid;
+}
+.boardCell {
+    border: 5px;
+    padding: 5px 50px;
+    border: 2px solid;
+    width: 100px;
+    height: 100px;
+}
