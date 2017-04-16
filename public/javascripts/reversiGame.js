@@ -78,6 +78,23 @@ function updateMessage(message) {
   messageBox.parentNode.replaceChild(newMessageBox, messageBox);
 }
 
+function updateBoard(){
+  let table = generateElement('table', null, 'board', null, null);
+  let old = document.body.querySelector('#board');
+  old.parentNode.replaceChild(table, old);
+  //generate rows of board and then td in the rows
+  for(let i = 0; i < width; i++){
+    console.log("test");
+    let row = generateElement('tr', 'boardRow', null, null, null);
+    document.body.querySelector('#board').appendChild(row);
+    for(let j = 0; j < width; j++){
+      let symbol = board[rowColToIndex(board, i, j)];
+      let cell = generateElement('td', 'boardCell', null, symbol, null);
+      document.body.querySelectorAll('.boardRow')[i].appendChild(cell);
+    }
+  }
+}
+
 function UserMove(){
   //visualize board
 	console.log(boardToString(board));
@@ -85,11 +102,11 @@ function UserMove(){
 	userArr = getValidMoves(board, color);
 	if(JSON.stringify(userArr) === JSON.stringify([])){
     //no valid moves, then click to skip turn.
-    let messageBox = document.body.querySelector('#gameMessage');
-    message =  "no valid moves for you, click to skip turn";
-    let newMessageBox = generateElement('div', null, 'gameMessage', message, null);
-    messageBox.parentNode.replaceChild(newMessageBox, messageBox);
+    updateMessage("no valid moves for you, click to skip turn");
     userPass = true;
+    if(computerPass){
+      finishGame();
+    }
 	} else {
 		userPass = false;
     updateMessage("What's your move?");
@@ -98,39 +115,54 @@ function UserMove(){
     cells.forEach(function(c, i, arr) {
       c.addEventListener('click', function(evt) {
         move = indexToRowCol(board, i);
+        console.log("HIIII", move);
+        isMoveValid = isValidMove(board, color, move.row, move.col);
+        if(isMoveValid !== true){
+          if(isMoveValid === false){
+            updateMessage("Invalid Move");
+          }
+          //move = readlineSync.question("\n What's your move?\n >");
+          isMoveValid = isValidMove(board, color, move);
+        }
+        if(isMoveValid === true){
+          board = setBoardCell(board, color, move.row, move.col);
+          cellsToFlip = getCellsToFlip(board, move.row, move.col);
+          board = flipCells(board, cellsToFlip);
+          isFull = isBoardFull(board);
+          updateBoard();
+        	console.log(boardToString(board));
+          if(isFull){
+            finishGame();
+          }
+          ComputerMove();
+          updateBoard();
+        	console.log(boardToString(board));
+          isFull = isBoardFull(board);
+          if(isFull){
+            finishGame();
+          }
+        }
       });
     });
-      //TODO: convert move to algebraic notation
-		isMoveValid = isValidMove(board, color, move.row, move.col);
-		while(isMoveValid !== true){
-			if(isMoveValid === false){
-				console.log("Invalid Move\n");
-			}
-			//move = readlineSync.question("\n What's your move?\n >");
-			isMoveValid = isValidMoveAlgebraicNotation(board, color, move);
-		}
-		if(isMoveValid === true){
-			board = placeLetter(board, color, move);
-			coordMove = algebraicToRowCol(move);
-			cellsToFlip = getCellsToFlip(board, coordMove.row, coordMove.col);
-			board = flipCells(board, cellsToFlip);
-		}
 	}
-	console.log(boardToString(board));
 }
 
 function ComputerMove(){
 	//get valid moves
 	opponentArr = getValidMoves(board, opponentColor);
 	if(JSON.stringify(opponentArr) === JSON.stringify([])){
-		move = readlineSync.question("\n No valid moves for computer, press <ENTER> to skip turn...\n>");
+		move = null;
+    updateMessage("No valid moves for computer, press <ENTER> to skip turn...>");
 		computerPass = true;
+    if(userPass){
+      finishGame();
+    }
 	} else {
 	computerPass = false;
-	readlineSync.question("\nPress <ENTER> to show computer's move...\n>");
-	coordMove = {"row": opponentArr[0][0], "col": opponentArr[0][1]};
-	board = setBoardCell(board, opponentColor, coordMove.row, coordMove.col);
-	cellsToFlip = getCellsToFlip(board, coordMove.row, coordMove.col);
+  updateMessage("Press <ENTER> to show computer's move...");
+	move = {"row": opponentArr[0][0], "col": opponentArr[0][1]};
+	board = setBoardCell(board, opponentColor, move.row, move.col);
+	cellsToFlip = getCellsToFlip(board, move.row, move.col);
 	board = flipCells(board, cellsToFlip);
 	}
 }
@@ -146,14 +178,11 @@ function InteractiveGame() {
 		ComputerMove();
 	}
 	isFull = isBoardFull(board);
-	while(isFull === false && !(userPass && computerPass)){
-		UserMove();
-		isFull = isBoardFull(board);
-		ComputerMove();
-		isFull = isBoardFull(board);
-	}
-  //get and print scores
-	const counts = getLetterCounts(board);
+  UserMove();
+}
+
+function finishGame(){
+  const counts = getLetterCounts(board);
 	console.log("Score\n====\nX: " + counts.X + "\nO: " + counts.O);
 	if(counts.X > counts.O){
 		if(color === "X"){
@@ -182,96 +211,6 @@ function InteractiveGame() {
 // }
 
 //else if(process.argv.length > 2){
-function ReadConfigFile(){
-	fs.readFile(process.argv[2], 'utf8', function(err, data){
-		if (err) {
-		console.log('uh oh', err);
-		} else {
-			console.log(data);
-			const jsonFile = JSON.parse(data);
-			color = jsonFile.boardPreset.playerLetter;
-			board = jsonFile.boardPreset.board;
-			const numComp = jsonFile.scriptedMoves.computer.length;
-			const numPlayer = jsonFile.scriptedMoves.player.length;
-			console.log(numPlayer);
-			let countComp = 0;
-			let countPlayer = 0;
-			isFull = isBoardFull(board);
-			console.log(boardToString(board));
-			if(color === "O"){
-				move = jsonFile.scriptedMoves.computer[0];
-				console.log("Computer move to " + move + " is scripted.");
-				readlineSync.question("Press <Enter> to show computer's move...");
-				board = placeLetter(board, opponentColor, move);
-				coordMove = algebraicToRowCol(move);
-				cellsToFlip = getCellsToFlip(board, coordMove.row, coordMove.col);
-				board = flipCells(board, cellsToFlip);
-				console.log(boardToString(board));
-				countComp++;
-				opponentColor = "X";
-			} else {
-				opponentColor = "O";
-			}
-			while(isFull === false && !(userPass && computerPass)){
-				if((numPlayer - countPlayer) > 0){
-					move = jsonFile.scriptedMoves.player[countPlayer];
-					counts = getLetterCounts(board);
-					console.log("Score\n====\nX: " + counts.X + "\nO: " + counts.O + "\n");
-					console.log("Player move to " + move + " is scripted.");
-					readlineSync.question("Press <Enter> to continue.");
-					board = placeLetter(board, color, move);
-					coordMove = algebraicToRowCol(move);
-					cellsToFlip = getCellsToFlip(board, coordMove.row, coordMove.col);
-					board = flipCells(board, cellsToFlip);
-					console.log(boardToString(board));
-					countPlayer++;
-					} else {
-						UserMove();
-				}
-
-				isFull = isBoardFull(board);
-				if((numComp - countComp) > 0){
-					move = jsonFile.scriptedMoves.computer[countComp];
-					counts = getLetterCounts(board);
-					console.log("Score\n====\nX: " + counts.X + "\nO: " + counts.O + "\n");
-					console.log("Computer move to " + move + " is scripted.");
-					readlineSync.question("Press <Enter> to show computer's move...");
-					board = placeLetter(board, opponentColor, move);
-					coordMove = algebraicToRowCol(move);
-					cellsToFlip = getCellsToFlip(board, coordMove.row, coordMove.col);
-					board = flipCells(board, cellsToFlip);
-					console.log(boardToString(board));
-					countComp++;
-				} else {
-					ComputerMove();
-				}
-
-				isFull = isBoardFull(board);
-			}
-			counts = getLetterCounts(board);
-			console.log("Score\n====\nX: " + counts.X + "\nO: " + counts.O + "\n");
-			if(counts.X > counts.O){
-				if(color === "X"){
-					console.log("You Win!");
-				}
-				else{
-				console.log("You Lose :((");
-				}
-			}
-			if(counts.O > counts.X){
-				if(color === "X"){
-					console.log("You Lose :((");
-				}
-				else{
-				console.log("You Win!");
-				}
-			}
-			if(counts.O === counts.X){
-				console.log("Tie!");
-			}
-		}
-	});
-}
 
 function main(){
   //document.body.style.backgroundImage = "url('background.jpeg')";
