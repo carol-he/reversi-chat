@@ -56,11 +56,11 @@ app.get('/', (req, res) => {
   }
 });
 
-app.get('/gameRoom', (req, res) => {
+app.get('/gameroom', (req, res) => {
 	console.log(req.method, req.path, "-", res.statusCode);
-  res.render('gameRoom');
+  res.render('gameroom');
 });
-app.post('/gameRoom', (req, res) => {
+app.post('/gameroom', (req, res) => {
 	console.log(req.method, req.path, "-", res.statusCode);
 });
 
