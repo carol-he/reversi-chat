@@ -56,12 +56,8 @@ app.get('/', (req, res) => {
   }
 });
 
-app.get('/gameroom', (req, res) => {
-	console.log(req.method, req.path, "-", res.statusCode);
+app.get('/gameroom', function (req, res) {
   res.render('gameroom');
-});
-app.post('/gameroom', (req, res) => {
-	console.log(req.method, req.path, "-", res.statusCode);
 });
 
 app.get('/login', (req, res) => {
