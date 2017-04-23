@@ -15,6 +15,7 @@ let computerPass = false;
 let counts;
 let messageBox;
 let message = "message";
+let width = 0;
 
 function generateElement(type, className, id, innerHTML, attrs) {
   const element = document.createElement(type);
@@ -73,14 +74,14 @@ function DisplayBoard(board, width){
 
 function updateMessage(message) {
   let messageBox = document.body.querySelector('#gameMessage');
-  message =  "What's your move?";
   let newMessageBox = generateElement('div', null, 'gameMessage', message, null);
   messageBox.parentNode.replaceChild(newMessageBox, messageBox);
 }
 
 function updateBoard(){
-  let table = generateElement('table', null, 'board', null, null);
   let old = document.body.querySelector('#board');
+  console.log(old);
+  let table = generateElement('table', null, 'board', null, null);
   old.parentNode.replaceChild(table, old);
   //generate rows of board and then td in the rows
   for(let i = 0; i < width; i++){
@@ -117,10 +118,9 @@ function UserMove(){
         move = indexToRowCol(board, i);
         console.log("HIIII", move);
         isMoveValid = isValidMove(board, color, move.row, move.col);
-        if(isMoveValid !== true){
-          if(isMoveValid === false){
-            updateMessage("Invalid Move");
-          }
+        console.log(isMoveValid);
+        if(isMoveValid === false){
+          updateMessage("Invalid Move");
           //move = readlineSync.question("\n What's your move?\n >");
           isMoveValid = isValidMove(board, color, move);
         }
@@ -159,7 +159,18 @@ function ComputerMove(){
     }
 	} else {
 	computerPass = false;
-  updateMessage("Press <ENTER> to show computer's move...");
+  updateMessage("Press ENTER to show computer's move...");
+  function pressed(e)
+  {
+      if(e.keyCode === 13)
+      {
+          alert('enter pressed');
+          //put button.click() here
+      }
+  }
+  $(document).ready(function(){
+    $(document).bind('keypress', pressed);
+  });
 	move = {"row": opponentArr[0][0], "col": opponentArr[0][1]};
 	board = setBoardCell(board, opponentColor, move.row, move.col);
 	cellsToFlip = getCellsToFlip(board, move.row, move.col);
@@ -220,7 +231,8 @@ function main(){
     const myelement = document.querySelector('.start');
     myelement.style.display = 'none';
     //create board
-    const width = document.querySelector('#width').value;
+
+    width = document.querySelector('#width').value;
     color = document.querySelector('#color').value;
     console.log("width: ", width, "color: ", color);
     ControlledGameSettings(width, color);
