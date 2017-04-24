@@ -83,19 +83,15 @@ function updateMessage(message) {
 //updates the actual board data
 //maybe should also update database?
 function updateBoard(){
-  let old = document.body.querySelector('#board');
-  console.log(old);
-  let table = generateElement('table', null, 'board', null, null);
-  old.parentNode.replaceChild(table, old);
+  //shouldn't replace table
+  let grid = document.body.querySelector('#board');
+  console.log(grid);
+  //instead of appending elements, change the data of the elements
   //generate rows of board and then td in the rows
   for(let i = 0; i < width; i++){
-    console.log("test");
-    let row = generateElement('tr', 'boardRow', null, null, null);
-    document.body.querySelector('#board').appendChild(row);
     for(let j = 0; j < width; j++){
       let symbol = board[rowColToIndex(board, i, j)];
-      let cell = generateElement('td', 'boardCell', null, symbol, null);
-      document.body.querySelectorAll('.boardRow')[i].appendChild(cell);
+      document.body.querySelectorAll('.boardRow')[i].querySelectorAll('.boardCell')[j].innerHTML = symbol;
     }
   }
 }
