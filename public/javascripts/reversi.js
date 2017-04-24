@@ -136,12 +136,12 @@ function flip(board, row, col){
 function flipCells(board, cellsToFlip){
     for(let i = 0; i < cellsToFlip.length; i++){
         for(let j = 0; j < cellsToFlip[i].length; j++){
-
-                 board = flip(board, cellsToFlip[i][j][0], cellsToFlip[i][j][1]);
-                }
-            }
+            board = flip(board, cellsToFlip[i][j][0], cellsToFlip[i][j][1]);
+        }
+    }
     return board;
 }
+
 function getCellsToFlip(board, lastRow, lastCol){
     //u have the coordinates
     const coord = rowColToIndex(board, lastRow, lastCol);

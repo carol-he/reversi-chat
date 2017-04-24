@@ -15,6 +15,7 @@ let messageBox;
 let message = "message";
 let width = 0;
 let move;
+const socket = io();
 //generates an HTML element
 function generateElement(type, className, id, innerHTML, attrs) {
   const element = document.createElement(type);
@@ -65,6 +66,12 @@ function DisplayBoard(board, width){
     document.body.querySelector('table').appendChild(row);
     for(let j = 0; j < width; j++){
       let symbol = board[rowColToIndex(board, i, j)];
+      if(symbol === "X"){
+        symbol = "⚫";
+      }
+      else if(symbol === "O"){
+        symbol = "⚪";
+      }
       let cell = generateElement('td', 'boardCell', null, symbol, null);
       document.body.querySelectorAll('.boardRow')[i].appendChild(cell);
     }
@@ -75,9 +82,7 @@ function DisplayBoard(board, width){
 
 //updates message game gives player. message is a string
 function updateMessage(message) {
-  let messageBox = document.body.querySelector('#gameMessage');
-  let newMessageBox = generateElement('div', null, 'gameMessage', message, null);
-  messageBox.parentNode.replaceChild(newMessageBox, messageBox);
+  document.body.querySelector('#gameMessage').innerHTML = message;
 }
 
 //updates the actual board data
@@ -91,7 +96,61 @@ function updateBoard(){
   for(let i = 0; i < width; i++){
     for(let j = 0; j < width; j++){
       let symbol = board[rowColToIndex(board, i, j)];
+      if(symbol === "X"){
+        symbol = "⚫";
+      }
+      else if(symbol === "O"){
+        symbol = "⚪";
+      }
       document.body.querySelectorAll('.boardRow')[i].querySelectorAll('.boardCell')[j].innerHTML = symbol;
+    }
+  }
+}
+
+let moveHandler = function(evt) {
+  //get valid moves, check if there are any
+  userArr = getValidMoves(board, color);
+  console.log("valid moves: ", userArr);
+  if(JSON.stringify(userArr) === JSON.stringify([])){
+    //no valid moves, then click to skip turn.
+    console.log("no valido morves");
+    updateMessage("no valid moves for you, click to skip turn");
+    userPass = true;
+    if(computerPass){
+      FinishGame();
+    } else {
+      ComputerMove();
+      updateBoard();
+    }
+  }
+  else {
+    console.log("EVENT: ", evt);
+    let col = Array.from(evt.target.parentNode.children).indexOf(evt.target);
+    let row = Array.from(evt.target.parentNode.parentNode.children).indexOf(evt.target.parentNode);
+    let i = row * width + col;
+    updateMessage("What's your move?");
+    move = indexToRowCol(board, i);
+    isMoveValid = isValidMove(board, color, move.row, move.col);
+    console.log(isMoveValid);
+    if(isMoveValid === false){
+      updateMessage("Invalid Move");
+      //move = readlineSync.question("\n What's your move?\n >");
+      isMoveValid = isValidMove(board, color, move);
+    }
+    else {
+      board = setBoardCell(board, color, move.row, move.col);
+      cellsToFlip = getCellsToFlip(board, move.row, move.col);
+      board = flipCells(board, cellsToFlip);
+      isFull = isBoardFull(board);
+      updateBoard();
+      console.log(boardToString(board));
+      if(isFull){
+        FinishGame();
+      }
+      //computer goes, update board
+      ComputerMove();
+      //once u update board, you gotta update cells
+      //cells = document.querySelectorAll('.boardCell');
     }
   }
 }
@@ -107,10 +166,10 @@ function UserMove(){
     updateMessage("no valid moves for you, click to skip turn");
     userPass = true;
     if(computerPass){
-      finishGame();
+      FinishGame();
     }
     else {
-      computerMove();
+      ComputerMove();
     }
 	} else {
 		userPass = false;
@@ -119,52 +178,7 @@ function UserMove(){
     let cells = document.querySelectorAll('.boardCell');
     console.log("cells: ", cells);
     cells.forEach(function(c, i, arr) {
-      c.addEventListener('click', function(evt) {
-        updateMessage("What's your move?");
-        move = indexToRowCol(board, i);
-        console.log("HIIII", move);
-        isMoveValid = isValidMove(board, color, move.row, move.col);
-        console.log(isMoveValid);
-        if(isMoveValid === false){
-          updateMessage("Invalid Move");
-          //move = readlineSync.question("\n What's your move?\n >");
-          isMoveValid = isValidMove(board, color, move);
-        }
-        else {
-          board = setBoardCell(board, color, move.row, move.col);
-          cellsToFlip = getCellsToFlip(board, move.row, move.col);
-          board = flipCells(board, cellsToFlip);
-          isFull = isBoardFull(board);
-          updateBoard();
-        	console.log(boardToString(board));
-          if(isFull){
-            finishGame();
-          }
-          //computer goes, update board
-          ComputerMove();
-          updateBoard();
-        	console.log(boardToString(board));
-          isFull = isBoardFull(board);
-          if(isFull){
-            finishGame();
-          }
-          //get valid moves, check if there are any
-          userArr = getValidMoves(board, color);
-        	if(JSON.stringify(userArr) === JSON.stringify([])){
-            //no valid moves, then click to skip turn.
-            updateMessage("no valid moves for you, click to skip turn");
-            userPass = true;
-            if(computerPass){
-              finishGame();
-            } else {
-              computerMove();
-              updateBoard();
-            }
-        	}
-          //once u update board, you gotta update cells
-          //cells = document.querySelectorAll('.boardCell');
-        }
-      });
+      c.addEventListener('click', moveHandler);
     });
 	}
 }
@@ -173,31 +187,32 @@ function UserMove(){
 function ComputerMove(){
 	//get valid moves
 	opponentArr = getValidMoves(board, opponentColor);
+  console.log("u r valid", opponentArr);
 	if(JSON.stringify(opponentArr) === JSON.stringify([])){
 		move = null;
     updateMessage("No valid moves for computer, press ENTER to skip turn...>");
+    let messageBox = document.body.querySelector('#gameMessage');
+    messageBox.addEventListener
 		computerPass = true;
     if(userPass){
-      finishGame();
+      FinishGame();
     }
 	} else {
 	computerPass = false;
   updateMessage("Press ENTER to show computer's move...");
-  function pressed(e)
-  {
-      if(e.keyCode === 13)
-      {
-          alert('enter pressed');
-          //put button.click() here
-      }
-  }
-  $(document).ready(function(){
-    $(document).bind('keypress', pressed);
-  });
 	move = {"row": opponentArr[0][0], "col": opponentArr[0][1]};
 	board = setBoardCell(board, opponentColor, move.row, move.col);
 	cellsToFlip = getCellsToFlip(board, move.row, move.col);
 	board = flipCells(board, cellsToFlip);
+
+  //update shit after flipping
+  updateBoard();
+  console.log(boardToString(board));
+  isFull = isBoardFull(board);
+  if(isFull){
+    FinishGame();
+  }
+  console.log("hello woorld");
 	}
   console.log("computer move");
 }
@@ -215,27 +230,34 @@ function InteractiveGame() {
   UserMove();
 }
 
-function finishGame(){
+function FinishGame(){
+  // let cells = document.querySelectorAll('.boardCell');
+  // cells.forEach(function(c, i, arr) {
+  //   c.removeEventListener('click');
+  // }
   console.log("game finished");
   const counts = getLetterCounts(board);
-	console.log("Score\n====\nX: " + counts.X + "\nO: " + counts.O);
+	const score = "Score<br>====<br>X: " + counts.X + "<br>O: " + counts.O + "<br>";
+  console.log(score);
 	if(counts.X > counts.O){
 		if(color === "X"){
-			console.log("You Win!");
+      updateMessage(score + "<br>You Win!");
+      //socket.emit('win', );
 		}
 		else{
-		console.log("You Lose :((");
+      updateMessage(score + "<br>You Lose :(");
 		}
 	}
 	if(counts.O > counts.X){
 		if(color === "X"){
-			console.log("You Lose :((");
+      updateMessage(score + "<br>You Lose :(");
 		}
 		else{
-		console.log("You Win!");
+      updateMessage(score + "<br>You Win!");
 		}
 	}
 	if(counts.O === counts.X){
+    updateMessage(score + "<br>Tie!");
 		console.log("Tie!");
 	}
 }

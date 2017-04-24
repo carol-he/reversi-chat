@@ -49,22 +49,22 @@ h1 span {
 #board {
     margin-top: 100px;
     display: inline-block;
-    border: 2px solid;
 }
 .boardCell {
-    border: 5px;
-    padding: 5px 50px;
-    border: 2px solid;
+    border: 2px solid white;
+    background-color: #d7e3f7;
     width: 100px;
     height: 100px;
+    font-size: 70px;
 }
 
 #gameMessage {
   display: block;
   margin: auto;
   padding: 20px;
-  background-color: whitesmoke;
-  width: 400px;
-  height: 100px;
+  background-color: #cecece;
+  width: 300px;
+  border-radius: 25px;
   text-align: center;
+  font-family: 'Inconsolata', monospace;
 }
