@@ -183,6 +183,10 @@ function UserMove(){
 	}
 }
 
+function letTheComputerMove(){
+
+}
+
 //computer makes its move if possible, otherwise it passes
 function ComputerMove(){
 	//get valid moves
@@ -235,6 +239,10 @@ function FinishGame(){
   // cells.forEach(function(c, i, arr) {
   //   c.removeEventListener('click');
   // }
+  let cells = document.querySelectorAll('.boardCell');
+  cells.forEach(function(c, i, arr) {
+    c.removeEventListener('click', moveHandler);
+  });
   console.log("game finished");
   const counts = getLetterCounts(board);
 	const score = "Score<br>====<br>X: " + counts.X + "<br>O: " + counts.O + "<br>";
