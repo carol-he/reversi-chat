@@ -119,8 +119,11 @@ let moveHandler = function(evt) {
     if(computerPass){
       FinishGame();
     } else {
+      let cells = document.querySelectorAll('.boardCell');
+      cells.forEach(function(c, i, arr) {
+        c.removeEventListener('click', moveHandler);
+      });
       ComputerMove();
-      updateBoard();
     }
   }
   else {
@@ -148,9 +151,11 @@ let moveHandler = function(evt) {
         FinishGame();
       }
       //computer goes, update board
+      let cells = document.querySelectorAll('.boardCell');
+      cells.forEach(function(c, i, arr) {
+        c.removeEventListener('click', moveHandler);
+      });
       ComputerMove();
-      //once u update board, you gotta update cells
-      //cells = document.querySelectorAll('.boardCell');
     }
   }
 }
@@ -183,31 +188,27 @@ function UserMove(){
 	}
 }
 
-function letTheComputerMove(){
-
+function skipComputerTurn(evt){
+  let messageBox = document.body.querySelector('#gameMessage');
+  messageBox.removeEventListener('click', skipComputerTurn);
+  computerPass = true;
+  if(userPass){
+    FinishGame();
+  }
+  let cells = document.querySelectorAll('.boardCell');
+  cells.forEach(function(c, i, arr) {
+    c.addEventListener('click', moveHandler);
+  });
 }
 
-//computer makes its move if possible, otherwise it passes
-function ComputerMove(){
-	//get valid moves
-	opponentArr = getValidMoves(board, opponentColor);
-  console.log("u r valid", opponentArr);
-	if(JSON.stringify(opponentArr) === JSON.stringify([])){
-		move = null;
-    updateMessage("No valid moves for computer, press ENTER to skip turn...>");
-    let messageBox = document.body.querySelector('#gameMessage');
-    messageBox.addEventListener
-		computerPass = true;
-    if(userPass){
-      FinishGame();
-    }
-	} else {
-	computerPass = false;
-  updateMessage("Press ENTER to show computer's move...");
-	move = {"row": opponentArr[0][0], "col": opponentArr[0][1]};
-	board = setBoardCell(board, opponentColor, move.row, move.col);
-	cellsToFlip = getCellsToFlip(board, move.row, move.col);
-	board = flipCells(board, cellsToFlip);
+function letTheComputerMove(evt){
+  let messageBox = document.body.querySelector('#gameMessage');
+  messageBox.removeEventListener('click', letTheComputerMove);
+  computerPass = false;
+  move = {"row": opponentArr[0][0], "col": opponentArr[0][1]};
+  board = setBoardCell(board, opponentColor, move.row, move.col);
+  cellsToFlip = getCellsToFlip(board, move.row, move.col);
+  board = flipCells(board, cellsToFlip);
 
   //update shit after flipping
   updateBoard();
@@ -216,7 +217,24 @@ function ComputerMove(){
   if(isFull){
     FinishGame();
   }
-  console.log("hello woorld");
+  let cells = document.querySelectorAll('.boardCell');
+  cells.forEach(function(c, i, arr) {
+    c.addEventListener('click', moveHandler);
+  });
+}
+
+//computer makes its move if possible, otherwise it passes
+function ComputerMove(){
+	//get valid moves
+	opponentArr = getValidMoves(board, opponentColor);
+  let messageBox = document.body.querySelector('#gameMessage');
+	if(JSON.stringify(opponentArr) === JSON.stringify([])){
+		move = null;
+    updateMessage("No valid moves for computer, click here to skip turn...");
+    messageBox.addEventListener('click', skipComputerTurn);
+	} else {
+    updateMessage("Click here to show computer's move...");
+  	messageBox.addEventListener('click', letTheComputerMove);
 	}
   console.log("computer move");
 }
