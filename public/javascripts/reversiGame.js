@@ -1,6 +1,5 @@
 // app.js
 
-let move;
 let color;
 let opponentColor;
 let coordMove;
@@ -8,7 +7,6 @@ let board;
 let userArr;
 let opponentArr;
 let cellsToFlip;
-let isMoveValid;
 let isFull;
 let userPass = false;
 let computerPass = false;
@@ -16,7 +14,8 @@ let counts;
 let messageBox;
 let message = "message";
 let width = 0;
-
+let move;
+//generates an HTML element
 function generateElement(type, className, id, innerHTML, attrs) {
   const element = document.createElement(type);
   if (className) {
@@ -36,6 +35,7 @@ function generateElement(type, className, id, innerHTML, attrs) {
   return element;
 }
 
+//generates the board based on width
 function ControlledGameSettings(width, color) {
 	board = generateBoard(width, width, " ");
 	console.log("Player is " + color);
@@ -53,6 +53,7 @@ function ControlledGameSettings(width, color) {
 	}
 }
 
+//creates a board element with table and puts it on the DOM (for the first time)
 function DisplayBoard(board, width){
   //create the board div (table?)
   const table = generateElement('table', null, 'board', null, null);
@@ -72,12 +73,15 @@ function DisplayBoard(board, width){
   document.body.appendChild(messagebox);
 }
 
+//updates message game gives player. message is a string
 function updateMessage(message) {
   let messageBox = document.body.querySelector('#gameMessage');
   let newMessageBox = generateElement('div', null, 'gameMessage', message, null);
   messageBox.parentNode.replaceChild(newMessageBox, messageBox);
 }
 
+//updates the actual board data
+//maybe should also update database?
 function updateBoard(){
   let old = document.body.querySelector('#board');
   console.log(old);
@@ -96,8 +100,9 @@ function updateBoard(){
   }
 }
 
+//the user move function
 function UserMove(){
-  //visualize board
+  //setup board initially main
 	console.log(boardToString(board));
   //see if there are valid moves
 	userArr = getValidMoves(board, color);
@@ -108,13 +113,18 @@ function UserMove(){
     if(computerPass){
       finishGame();
     }
+    else {
+      computerMove();
+    }
 	} else {
 		userPass = false;
     updateMessage("What's your move?");
     //TODO: wait for player to click a cell
     let cells = document.querySelectorAll('.boardCell');
+    console.log("cells: ", cells);
     cells.forEach(function(c, i, arr) {
       c.addEventListener('click', function(evt) {
+        updateMessage("What's your move?");
         move = indexToRowCol(board, i);
         console.log("HIIII", move);
         isMoveValid = isValidMove(board, color, move.row, move.col);
@@ -124,7 +134,7 @@ function UserMove(){
           //move = readlineSync.question("\n What's your move?\n >");
           isMoveValid = isValidMove(board, color, move);
         }
-        if(isMoveValid === true){
+        else {
           board = setBoardCell(board, color, move.row, move.col);
           cellsToFlip = getCellsToFlip(board, move.row, move.col);
           board = flipCells(board, cellsToFlip);
@@ -134,6 +144,7 @@ function UserMove(){
           if(isFull){
             finishGame();
           }
+          //computer goes, update board
           ComputerMove();
           updateBoard();
         	console.log(boardToString(board));
@@ -141,18 +152,34 @@ function UserMove(){
           if(isFull){
             finishGame();
           }
+          //get valid moves, check if there are any
+          userArr = getValidMoves(board, color);
+        	if(JSON.stringify(userArr) === JSON.stringify([])){
+            //no valid moves, then click to skip turn.
+            updateMessage("no valid moves for you, click to skip turn");
+            userPass = true;
+            if(computerPass){
+              finishGame();
+            } else {
+              computerMove();
+              updateBoard();
+            }
+        	}
+          //once u update board, you gotta update cells
+          //cells = document.querySelectorAll('.boardCell');
         }
       });
     });
 	}
 }
 
+//computer makes its move if possible, otherwise it passes
 function ComputerMove(){
 	//get valid moves
 	opponentArr = getValidMoves(board, opponentColor);
 	if(JSON.stringify(opponentArr) === JSON.stringify([])){
 		move = null;
-    updateMessage("No valid moves for computer, press <ENTER> to skip turn...>");
+    updateMessage("No valid moves for computer, press ENTER to skip turn...>");
 		computerPass = true;
     if(userPass){
       finishGame();
@@ -176,6 +203,7 @@ function ComputerMove(){
 	cellsToFlip = getCellsToFlip(board, move.row, move.col);
 	board = flipCells(board, cellsToFlip);
 	}
+  console.log("computer move");
 }
 
 function InteractiveGame() {
@@ -188,11 +216,11 @@ function InteractiveGame() {
     console.log("color is O");
 		ComputerMove();
 	}
-	isFull = isBoardFull(board);
   UserMove();
 }
 
 function finishGame(){
+  console.log("game finished");
   const counts = getLetterCounts(board);
 	console.log("Score\n====\nX: " + counts.X + "\nO: " + counts.O);
 	if(counts.X > counts.O){
@@ -215,13 +243,6 @@ function finishGame(){
 		console.log("Tie!");
 	}
 }
-
-// if(process.argv.length = 2){
-// 	ControlledGameSettings();
-// 	InteractiveGame();
-// }
-
-//else if(process.argv.length > 2){
 
 function main(){
   //document.body.style.backgroundImage = "url('background.jpeg')";
