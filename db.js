@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const URLSlugs = require('mongoose-url-slugs');
+const passportLocalMongoose = require('passport-local-mongoose');
 
 const User = new mongoose.Schema({
   username: {type: String, unique: true},
@@ -27,30 +28,10 @@ const Game = new mongoose.Schema({
     board: String, // array with board info
     turn: String // whose turn it is X/O
   },
-  players: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }]// a reference to two user objects
+  players: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }]// a reference to user objects
 });
 
 const x = mongoose.model('User', User);
 const y = mongoose.model('Leaderboard', Leaderboard);
 const z = mongoose.model('Game', Game);
 mongoose.model('Online', Online);
-
-// is the environment variable, NODE_ENV, set to PRODUCTION?
-if (process.env.NODE_ENV === 'PRODUCTION') {
- // if we're in PRODUCTION mode, then read the configration from a file
- // use blocking file io to do this...
- var fs = require('fs');
- var path = require('path');
- var fn = path.join(__dirname, 'config.json');
- var data = fs.readFileSync(fn);
-
- // our configuration file will be in json, so parse it and set the
- // conenction string appropriately!
- var conf = JSON.parse(data);
- var dbconf = conf.dbconf;
-} else {
- // if we're not in PRODUCTION mode, then use
- dbconf = 'mongodb://localhost/chatroomproject';
-}
-
-mongoose.connect(dbconf);

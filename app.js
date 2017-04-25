@@ -7,10 +7,24 @@ const http = require('http').Server(app);
 const bcrypt = require('bcrypt');
 const io = require('socket.io')(http);
 const sharedsession = require("express-socket.io-session");
-const passport = require('passport');
+const passport = require('passport')
+const FacebookStrategy = require('passport-facebook').Strategy;
+const LocalStrategy = require('passport-local').Strategy;
 const flash = require('connect-flash');
 
 app.use(bodyParser.urlencoded({ extended: false }));
+
+passport.use(new FacebookStrategy({
+    clientID: 1815619725423560,
+    clientSecret: "587111d5b4f123a71fcafe0f1cf4ca59",
+    callbackURL: "http://localhost:3000/auth/facebook/callback"
+  },
+  function(accessToken, refreshToken, profile, cb) {
+    User.findOrCreate({ facebookId: profile.id }, function (err, user) {
+      return cb(err, user);
+    });
+  }
+));
 
 // express static setup
 const path = require('path');
@@ -38,6 +52,32 @@ const mongoose = require('mongoose');
 //create constructor/model
 const User = mongoose.model('User');
 const Online = mongoose.model('Online');
+
+// passport config
+var Account = require('./account');
+passport.use(new LocalStrategy(Account.authenticate()));
+passport.serializeUser(Account.serializeUser());
+passport.deserializeUser(Account.deserializeUser());
+
+//mongoose things
+// is the environment variable, NODE_ENV, set to PRODUCTION?
+if (process.env.NODE_ENV === 'PRODUCTION') {
+ // if we're in PRODUCTION mode, then read the configration from a file
+ // use blocking file io to do this...
+ var fs = require('fs');
+ var fn = path.join(__dirname, 'config.json');
+ var data = fs.readFileSync(fn);
+
+ // our configuration file will be in json, so parse it and set the
+ // conenction string appropriately!
+ var conf = JSON.parse(data);
+ var dbconf = conf.dbconf;
+} else {
+ // if we're not in PRODUCTION mode, then use
+ dbconf = 'mongodb://localhost/chatroomproject';
+}
+
+mongoose.connect(dbconf);
 
 
 app.get('/', (req, res) => {

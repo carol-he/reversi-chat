@@ -15,5 +15,8 @@
   "bugs": {
     "url": "https://github.com/nyu-csci-ua-0480-008-spring-2017/ch2727-final-project/issues"
   },
-  "homepage": "https://github.com/nyu-csci-ua-0480-008-spring-2017/ch2727-final-project#readme"
+  "homepage": "https://github.com/nyu-csci-ua-0480-008-spring-2017/ch2727-final-project#readme",
+  "dependencies": {
+    "passport-local-mongoose": "^4.0.0"
+  }
 }
