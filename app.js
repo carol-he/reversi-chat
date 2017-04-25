@@ -89,11 +89,12 @@ app.get('/', (req, res) => {
     console.log(req.method, req.path, "-", res.statusCode);
   }
   else{
+    console.log(req.user);
 		Online.find({}, (err, onlines) => {
 			if(err) {
 				console.log(err);
 			}
-			res.render('chat', {inSession: req.session.username, onlines: onlines});
+			res.render('chat', {inSession: req.user.username, onlines: onlines});
 		});
   }
 });
@@ -154,14 +155,16 @@ app.get('/logout', (req, res) => {
 
 //broadcast to everyone
 io.on('connection', function(socket){
+  //for sending chat messages
   socket.on('chat message', function(msg){
     io.emit('chat message', msg);
   });
+  //to tell when someone connected
 	socket.on('connect', function(msg){
 		io.emit('person is online', msg);
-		console.log("req.session.usr: ", req.session.username);
+		console.log("req.session.usr: ", req.user.username);
 		const o = new Online({
-			onlineUser: req.session.username
+			onlineUser: req.user.username
 		});
 		console.log(' has connected');
 		console.log("o", o);
@@ -178,6 +181,7 @@ io.on('connection', function(socket){
 			//res.render('chat', {inSession: req.session.username, onlines: onlines});
 		});
 	});
+  //to tell when someone disconnected
 	socket.on('disconnect', function(msg){
 		io.emit('person is offline', msg);
 		console.log(' has disconnected');
