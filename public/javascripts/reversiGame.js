@@ -1,5 +1,4 @@
 // app.js
-
 let color;
 let opponentColor;
 let coordMove;
@@ -264,31 +263,31 @@ function FinishGame(){
   });
   console.log("game finished");
   const counts = getLetterCounts(board);
-	const score = "Score<br>====<br>X: " + counts.X + "<br>O: " + counts.O + "<br>";
-  console.log(score);
+	const display = "Score<br>====<br>X: " + counts.X + "<br>O: " + counts.O + "<br>";
+  console.log(display);
 	if(counts.X > counts.O){
 		if(color === "X"){
-      updateMessage(score + "<br>You Win!");
+      updateMessage(display + "<br>You Win!");
       //socket.emit('win', );
       score = "win";
 		}
 		else{
-      updateMessage(score + "<br>You Lose :(");
+      updateMessage(display + "<br>You Lose :(");
       score = "loss";
 		}
 	}
 	if(counts.O > counts.X){
 		if(color === "X"){
-      updateMessage(score + "<br>You Lose :(");
+      updateMessage(display + "<br>You Lose :(");
       score = "loss";
 		}
 		else{
-      updateMessage(score + "<br>You Win!");
+      updateMessage(display + "<br>You Win!");
       score = "win";
 		}
 	}
 	if(counts.O === counts.X){
-    updateMessage(score + "<br>Tie!");
+    updateMessage(display + "<br>Tie!");
 		console.log("Tie!");
     score = "tie";
 	}
@@ -296,22 +295,8 @@ function FinishGame(){
 }
 
 function updatePlayerInfo(score){
-  // update one after finding (hello callbacks!)
-  User.findOne({username: inSession }, function(err, user, count) {
-      // we can call push on toppings!
-      if(score === "win"){
-        user.wins++;
-      }
-      else if(score === "loss"){
-        user.losses++;
-      }
-      else if(score === "tie"){
-        user.ties++;
-      }
-  	user.save(function(saveErr, saveUser, saveCount) {
-  		console.log(saveUser);
-  	});
-  });
+  console.log("hellooo");
+  //ajax shit
 }
 
 function main(){

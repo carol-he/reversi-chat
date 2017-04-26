@@ -7,6 +7,8 @@ const Account = new mongoose.Schema({
   password: String,
   email: String,
   wins: Number,
+  losses: Number,
+  ties: Number,
   gamesPlayed: Number,
   currentGameInfo: {
     currentGameId: Number,

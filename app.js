@@ -50,11 +50,10 @@ app.use(flash());
 //require mongoose
 const mongoose = require('mongoose');
 //create constructor/model
-const User = mongoose.model('User');
 const Online = mongoose.model('Online');
 
 // passport config
-var Account = require('./account');
+const Account = require('./account');
 passport.use(new LocalStrategy(Account.authenticate()));
 passport.serializeUser(Account.serializeUser());
 passport.deserializeUser(Account.deserializeUser());
@@ -120,6 +119,46 @@ app.get('/gameroom', (req, res) => {
   else {
     res.render('gameroom', {inSession: req.user.username});
   }
+});
+
+app.get('/api/gameroom', (req, res) => {
+  // update one after finding (hello callbacks!)
+  Account.findOne({username: inSession }, function(err, account, count) {
+      // we can call push on toppings!
+      if(score === "win"){
+        account.wins++;
+      }
+      else if(score === "loss"){
+        account.losses++;
+      }
+      else if(score === "tie"){
+        account.ties++;
+      }
+  	account.save(function(saveErr, saveUser, saveCount) {
+  		console.log(saveUser);
+  	});
+  });
+});
+
+//
+app.post('/api/gameroom/update', (req, res) => {
+  // update one after finding (hello callbacks!)
+  Account.findOne({username: inSession }, function(err, account, count) {
+      // we can call push on toppings!
+      if(score === "win"){
+        account.wins++;
+      }
+      else if(score === "loss"){
+        account.losses++;
+      }
+      else if(score === "tie"){
+        account.ties++;
+      }
+      account.gamesPlayed++;
+  	account.save(function(saveErr, saveUser, saveCount) {
+  		console.log(saveUser);
+  	});
+  });
 });
 
 app.get('/login', (req, res) => {
