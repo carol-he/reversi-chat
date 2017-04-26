@@ -90,23 +90,36 @@ app.get('/', (req, res) => {
   }
   else{
     console.log(req.user);
-		Online.find({}, (err, onlines) => {
-			if(err) {
-				console.log(err);
-			}
-			res.render('chat', {inSession: req.user.username, onlines: onlines});
-		});
+    res.redirect('/chat');
+    console.log(req.method, req.path, "-", res.statusCode);
+  }
+});
+
+app.get('/chat', (req, res) => {
+	console.log(req.method, req.path, "-", res.statusCode);
+  if(!req.user){
+    res.redirect('/login');
+    console.log(req.method, req.path, "-", res.statusCode);
+  }
+  else {
+    Online.find({}, (err, onlines) => {
+      if(err) {
+        console.log(err);
+      }
+      res.render('chat', {inSession: req.user.username, onlines: onlines});
+    });
   }
 });
 
 app.get('/gameroom', (req, res) => {
 	console.log(req.method, req.path, "-", res.statusCode);
-  res.render('gameroom');
-});
-
-app.get('/gamerooms', (req, res) => {
-	console.log(req.method, req.path, "-", res.statusCode);
-  res.render('gamerooms');
+  if(!req.user){
+    res.redirect('/login');
+    console.log(req.method, req.path, "-", res.statusCode);
+  }
+  else {
+    res.render('gameroom', {inSession: req.user.username});
+  }
 });
 
 app.get('/login', (req, res) => {
@@ -153,18 +166,22 @@ app.get('/logout', (req, res) => {
 //   });
 // });
 
+
+
+
 //broadcast to everyone
 io.on('connection', function(socket){
+
   //for sending chat messages
   socket.on('chat message', function(msg){
     io.emit('chat message', msg);
   });
   //to tell when someone connected
-	socket.on('connect', function(msg){
+	socket.on('person is online', function(msg){
 		io.emit('person is online', msg);
-		console.log("req.session.usr: ", req.user.username);
+		console.log("req.session.usr: ", msg);
 		const o = new Online({
-			onlineUser: req.user.username
+			onlineUser: msg
 		});
 		console.log(' has connected');
 		console.log("o", o);
@@ -181,23 +198,26 @@ io.on('connection', function(socket){
 			//res.render('chat', {inSession: req.session.username, onlines: onlines});
 		});
 	});
+  socket.on('disconnect', function(){
+    io.emit('person is offline');
+    console.log(' has disconnected');
+  });
   //to tell when someone disconnected
-	socket.on('disconnect', function(msg){
-		io.emit('person is offline', msg);
-		console.log(' has disconnected');
+  socket.on('disconnect', function(msg){
+    io.emit('person is offline', msg);
+		console.log('sooomeeonee has disconnected');
 		Online.find({}, (err, onlines) => {
 			if(err) {
 				console.log(err);
 			}
-			// Online.remove({onlineUser: req.session.username}, (err) => {
-			// 	if(err) {
-			// 		console.log(err);
-			// 	}
-			// 	console.log("hi");
-			// });
-			//res.render('chat', {inSession: req.session.username, onlines: onlines});
+			Online.remove({onlineUser: msg.name}, (err) => {
+				if(err) {
+					console.log(err);
+				}
+				console.log("hi");
+			});
 		});
-	});
+  });
 });
 
 http.listen(process.env.PORT || 8080);

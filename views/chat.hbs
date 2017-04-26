@@ -1,3 +1,6 @@
+ <script>const inSession = "{{{inSession}}}";
+ </script>
+ <script src='/javascripts/main.js'></script>
 <div id="wrapper">
   <div id="anotherwrapper">
       <img id="headerimg" src="hellothere.jpg" alt="hello there">
@@ -13,7 +16,6 @@
             <p>Online:</p>
             <ul id="people">
                 <li><p>Carol Chen</p></li>
-                <li><p>Jill Xu</p></li>
                 {{#each onlines as |online|}}
                 <li id="{{onlineUser}}"><p>{{onlineUser}}</p></li>
                 {{/each}}
@@ -32,44 +34,3 @@
     </div>
   </div>
 </div>
-<script>
-  $(function () {
-    const socket = io();
-    $('form').submit(function(){
-      const $cont = $('#message-inner-box');
-      $cont[0].scrollTop = $cont[0].scrollHeight;
-      socket.emit('chat message', '<b>{{inSession}}</b>' + ": " + $('#m').val());
-      $('#m').val('');
-      $('#m').keyup(function(e) {
-          if (e.keyCode === 13) {
-              //$cont.append('<li>' + $(this).val() + '</li>');
-              $cont[0].scrollTop = $cont[0].scrollHeight;
-              //$('#m').val('');
-          }
-      })
-      .focus();
-      return false;
-    });
-    // emitting actually??
-    socket.on('chat message', function(msg){
-      $('#messages').append($('<li id="{{inSession}}">').html(msg));
-    });
-    //if someone logs in, append their username
-    var online = io.connect('/');
-    online.on('connect', function () {
-      online.emit('person is online', "<p>{{inSession}}</p>");
-    });
-    //appending online person
-    online.on('person is online', function(msg){
-      $('#people').append($('<li id="' + online.id + '">').html(msg));
-      console.log("test");
-    });
-    online.on('person is offline', function(msg){
-      $("#people").remove('<li><p>{{inSession}}</p></li>');
-      $('#' + online.id).remove()
-      $('#people').append($('<li>').html("HELLO"));
-      console.log("test");
-    });
-    //if someone logs out, find their username and remove it
-  });
-</script>
