@@ -171,13 +171,14 @@ app.get('/logout', (req, res) => {
 
 //broadcast to everyone
 io.on('connection', function(socket){
-
+  let userID;
   //for sending chat messages
   socket.on('chat message', function(msg){
     io.emit('chat message', msg);
   });
   //to tell when someone connected
 	socket.on('person is online', function(msg){
+    userID = msg;
 		io.emit('person is online', msg);
 		console.log("req.session.usr: ", msg);
 		const o = new Online({
@@ -198,19 +199,15 @@ io.on('connection', function(socket){
 			//res.render('chat', {inSession: req.session.username, onlines: onlines});
 		});
 	});
-  socket.on('disconnect', function(){
-    io.emit('person is offline');
-    console.log(' has disconnected');
-  });
   //to tell when someone disconnected
   socket.on('disconnect', function(msg){
-    io.emit('person is offline', msg);
-		console.log('sooomeeonee has disconnected');
+    io.emit('person is offline', userID);
+		console.log(' has disconnected', userID);
 		Online.find({}, (err, onlines) => {
 			if(err) {
 				console.log(err);
 			}
-			Online.remove({onlineUser: msg.name}, (err) => {
+			Online.remove({onlineUser: userID}, (err) => {
 				if(err) {
 					console.log(err);
 				}

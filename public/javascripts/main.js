@@ -37,7 +37,7 @@ $(function () {
   });
   socket.on('person is offline', function(msg){
     console.log("going offline id", inSession);
-    $('#' + inSession).remove();
+    $('#people').find('#' + msg).remove();
     console.log("test");
   });
   //if someone logs out, find their username and remove it

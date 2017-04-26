@@ -257,6 +257,7 @@ function FinishGame(){
   // cells.forEach(function(c, i, arr) {
   //   c.removeEventListener('click');
   // }
+  let score = "";
   let cells = document.querySelectorAll('.boardCell');
   cells.forEach(function(c, i, arr) {
     c.removeEventListener('click', moveHandler);
@@ -269,23 +270,48 @@ function FinishGame(){
 		if(color === "X"){
       updateMessage(score + "<br>You Win!");
       //socket.emit('win', );
+      score = "win";
 		}
 		else{
       updateMessage(score + "<br>You Lose :(");
+      score = "loss";
 		}
 	}
 	if(counts.O > counts.X){
 		if(color === "X"){
       updateMessage(score + "<br>You Lose :(");
+      score = "loss";
 		}
 		else{
       updateMessage(score + "<br>You Win!");
+      score = "win";
 		}
 	}
 	if(counts.O === counts.X){
     updateMessage(score + "<br>Tie!");
 		console.log("Tie!");
+    score = "tie";
 	}
+  updatePlayerInfo(score);
+}
+
+function updatePlayerInfo(score){
+  // update one after finding (hello callbacks!)
+  User.findOne({username: inSession }, function(err, user, count) {
+      // we can call push on toppings!
+      if(score === "win"){
+        user.wins++;
+      }
+      else if(score === "loss"){
+        user.losses++;
+      }
+      else if(score === "tie"){
+        user.ties++;
+      }
+  	user.save(function(saveErr, saveUser, saveCount) {
+  		console.log(saveUser);
+  	});
+  });
 }
 
 function main(){

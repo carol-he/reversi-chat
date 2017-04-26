@@ -7,6 +7,8 @@ const User = new mongoose.Schema({
   password: String,
   email: String,
   wins: Number,
+  losses: Number,
+  ties: Number,
   gamesPlayed: Number,
   currentGameInfo: {
     currentGameId: Number,
@@ -18,6 +20,7 @@ const Online = new mongoose.Schema({
   onlineUser: String
   //onlineUser: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }
 });
+
 const Leaderboard = new mongoose.Schema({
   users: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }]// a reference to a set of user objects
 });
