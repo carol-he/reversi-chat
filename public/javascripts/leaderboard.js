@@ -19,9 +19,27 @@ function generateElement(type, className, id, innerHTML, attrs) {
 }
 
 function main(){
-  if(leaderboard !== null){
+  console.log("leaderboard: ", arr);
+  if(arr !== null){
     let row, cell;
-    leaderboard.users.forEach(function(l, i, arr) {
+    let ratioString;
+    arr.forEach(function(l, i, a) {
+      if(l.gamesPlayed === 0){
+        l.ties = "--"
+        ratioString = "0%"
+      } else {
+        let ratio = (l.wins / l.gamesPlayed) * 100;
+        ratioString = ratio + "%"
+        if(l.wins === 0){
+          l.wins = "--"
+        }
+        if(l.losses === 0){
+          l.losses = "--"
+        }
+        if(l.ties === 0){
+          l.ties = "--"
+        }
+      }
       row = generateElement('tr', 'PlayerStats');
       document.body.querySelector('#leadertable').appendChild(row);
       cell = generateElement('td', 'rank', null, i + 1);
@@ -32,10 +50,8 @@ function main(){
       document.body.querySelectorAll('.PlayerStats')[i].appendChild(cell);
       cell = generateElement('td', 'lost', null, l.losses);
       document.body.querySelectorAll('.PlayerStats')[i].appendChild(cell);
-      cell = generateElement('td', 'tied', null, l.tied);
+      cell = generateElement('td', 'tied', null, l.ties);
       document.body.querySelectorAll('.PlayerStats')[i].appendChild(cell);
-      let ratio = (l.wins / l.gamesPlayed);
-      let ratioString = ratio + "%"
       cell = generateElement('td', 'ratio', null, ratioString);
       document.body.querySelectorAll('.PlayerStats')[i].appendChild(cell);
     });

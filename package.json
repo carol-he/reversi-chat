@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/nyu-csci-ua-0480-008-spring-2017/ch2727-final-project#readme",
   "dependencies": {
+    "express-handlebars": "^3.0.0",
     "passport-local-mongoose": "^4.0.0"
   }
 }

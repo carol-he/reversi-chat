@@ -1,4 +1,24 @@
-<script>const leaderboard = "{{{leaderboard}}}";
+<script>
+const arr = [];
+{{#each arrusers}}
+  arr.push({
+      "username": "{{{username}}}",
+      "wins": {{{wins}}},
+      "losses": {{{losses}}},
+      "ties": {{{ties}}},
+      "gamesPlayed": {{{gamesPlayed}}}
+  });
+{{/each}}
+// for(let i = 0; i < {{{arrusers.length}}}; i++){
+//   arr.push({
+//       "username":  {{{arrusers.[i].username}}},
+//       "wins": {{{arrusers.[i].wins}}},
+//       "losses": {{{arrusers.[i].losses}}},
+//       "ties": {{{arrusers.[i].ties}}},
+//       "gamesPlayed": {{{arrusers.[i].gamesPlayed}}}
+//   });
+// }
+console.log("hello", arr);
 </script>
 <script src='/javascripts/leaderboard.js'></script>
 <body>

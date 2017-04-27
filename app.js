@@ -11,6 +11,7 @@ const passport = require('passport')
 const FacebookStrategy = require('passport-facebook').Strategy;
 const LocalStrategy = require('passport-local').Strategy;
 const flash = require('connect-flash');
+//const exphbs = require('express-handlebars');
 
 app.use(bodyParser.urlencoded({ extended: false }));
 
@@ -79,6 +80,30 @@ if (process.env.NODE_ENV === 'PRODUCTION') {
 }
 
 mongoose.connect(dbconf);
+
+//sets ur game stats to 0 instead of undefined
+app.use('/gameroom', (req, res, next) => {
+  console.log("reqqwe: ", req.user);
+  if(req.user){
+    Account.findOne({username: req.user.username }, function(err, account, count) {
+      console.log("account: ", account);
+      if(!account.wins){
+        account.wins = 0;
+      }
+      if(!account.losses){
+        account.losses = 0;
+      }
+      if(!account.ties){
+        account.ties = 0;
+      }
+      if(!account.gamesPlayed){
+        account.gamesPlayed = 0;
+      }
+    	account.save();
+    });
+  }
+  next();
+});
 
 
 app.get('/', (req, res) => {
@@ -163,7 +188,7 @@ app.post('/api/gameroom/update', (req, res) => {
           }
           //if it's not on leaderboard, push it on
           if(leaderboard){
-            leaderboard.forEach(function(l, i, arr) {
+            leaderboard.users.forEach(function(l, i, arr) {
               if(l === saveUser._id){
                 let exists = true;
               }
@@ -183,8 +208,9 @@ app.post('/api/gameroom/update', (req, res) => {
               console.log(saveLeaderboard);
             });
           }
+          res.send({"wins": saveUser.wins, "losses": saveUser.losses, "ties": saveUser.ties, "gamesPlayed": saveUser.gamesPlayed});
         });
-        res.send({"wins": saveUser.wins, "losses": saveUser.losses, "ties": saveUser.ties, "gamesPlayed": saveUser.gamesPlayed});
+
       } else {
         res.send({'err': 'update score failed'})
       }
@@ -225,7 +251,20 @@ app.get('/leaderboard', function (req, res) {
     if(err) {
       console.log(err);
     }
-    res.render('leaderboard', leaderboard);
+    //get actual array of users
+    let arrusers = [];
+    leaderboard.users.forEach(function(u, i, arr){
+      console.log(u);
+      Account.findOne({_id: u}, function(e, a){
+        if(e){
+          console.log(e);
+        }
+        console.log("a: ", a);
+        arrusers.push(a);
+      });
+    });
+    console.log("arrusers", arrusers);
+    res.render('leaderboard', {arrusers: arrusers});
   });
 });
 
