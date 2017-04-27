@@ -17,7 +17,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 passport.use(new FacebookStrategy({
     clientID: 1815619725423560,
     clientSecret: "587111d5b4f123a71fcafe0f1cf4ca59",
-    callbackURL: "http://localhost:3000/auth/facebook/callback"
+    callbackURL: "http://localhost:8080/auth/facebook/callback"
   },
   function(accessToken, refreshToken, profile, cb) {
     User.findOrCreate({ facebookId: profile.id }, function (err, user) {
@@ -53,7 +53,7 @@ const mongoose = require('mongoose');
 const Online = mongoose.model('Online');
 
 // passport config
-const Account = require('./account');
+let Account = require('./account');
 passport.use(new LocalStrategy(Account.authenticate()));
 passport.serializeUser(Account.serializeUser());
 passport.deserializeUser(Account.deserializeUser());
@@ -125,6 +125,7 @@ app.get('/api/gameroom', (req, res) => {
   // update one after finding (hello callbacks!)
   Account.findOne({username: inSession }, function(err, account, count) {
       // we can call push on toppings!
+      console.log("account: ", account);
       if(score === "win"){
         account.wins++;
       }
@@ -143,20 +144,38 @@ app.get('/api/gameroom', (req, res) => {
 //
 app.post('/api/gameroom/update', (req, res) => {
   // update one after finding (hello callbacks!)
-  Account.findOne({username: inSession }, function(err, account, count) {
-      // we can call push on toppings!
-      if(score === "win"){
+  Account.findOne({username: req.query.username }, function(err, account, count) {
+    console.log("account: ", account);
+      if(req.query.score === "win"){
+        if(!account.wins){
+          account.wins = 0;
+        }
         account.wins++;
       }
-      else if(score === "loss"){
+      else if(req.query.score === "loss"){
+        if(!account.losses){
+          account.losses = 0;
+        }
         account.losses++;
       }
-      else if(score === "tie"){
+      else if(req.query.score === "tie"){
+        if(!account.ties){
+          account.ties = 0;
+        }
         account.ties++;
       }
+      if(!account.gamesPlayed){
+        account.gamesPlayed = 0;
+      }
       account.gamesPlayed++;
-  	account.save(function(saveErr, saveUser, saveCount) {
-  		console.log(saveUser);
+  	account.save(function(saveErr, saveUser) {
+      console.log("saveErr", saveErr);
+  		console.log("saveUser", saveUser);
+      if(saveUser){
+        res.send({"wins": saveUser.wins, "losses": saveUser.losses, "ties": saveUser.ties, "gamesPlayed": saveUser.gamesPlayed});
+      } else {
+        res.send({'err': 'update score failed'})
+      }
   	});
   });
 });

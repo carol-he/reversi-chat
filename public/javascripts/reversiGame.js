@@ -84,6 +84,10 @@ function updateMessage(message) {
   document.body.querySelector('#gameMessage').innerHTML = message;
 }
 
+function appendMessage(message) {
+  document.body.querySelector('#gameMessage').innerHTML = document.body.querySelector('#gameMessage').innerHTML + '<br>' + message;
+}
+
 //updates the actual board data
 //maybe should also update database?
 function updateBoard(){
@@ -194,6 +198,9 @@ function skipComputerTurn(evt){
   if(userPass){
     FinishGame();
   }
+  else{
+    updateMessage("What's your move?");
+  }
   let cells = document.querySelectorAll('.boardCell');
   cells.forEach(function(c, i, arr) {
     c.addEventListener('click', moveHandler);
@@ -215,6 +222,8 @@ function letTheComputerMove(evt){
   isFull = isBoardFull(board);
   if(isFull){
     FinishGame();
+  } else {
+    updateMessage("What's your move?");
   }
   let cells = document.querySelectorAll('.boardCell');
   cells.forEach(function(c, i, arr) {
@@ -297,6 +306,27 @@ function FinishGame(){
 function updatePlayerInfo(score){
   console.log("hellooo");
   //ajax shit
+  const url = 'http://localhost:8080/api/gameroom/update?score=' + score + '&username=' + inSession;
+  const req = new XMLHttpRequest();
+  req.open('POST', url);
+  req.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+  req.addEventListener('load', function() {
+    if(req.status >= 200 && req.status < 400){
+      console.log("req responseText: ", req.responseText);
+      const data = JSON.parse(req.responseText);
+      //modify dom with new data
+      console.log(data);
+      appendMessage("---");
+      appendMessage("total wins: " + data.wins);
+      appendMessage("total losses: " + data.losses);
+      appendMessage("# of games you've played: " + data.gamesPlayed);
+    }
+  });
+  req.addEventListener('error', function() {
+
+  });
+
+  req.send();
 }
 
 function main(){
