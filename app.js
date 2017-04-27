@@ -121,26 +121,6 @@ app.get('/gameroom', (req, res) => {
   }
 });
 
-app.get('/api/gameroom', (req, res) => {
-  // update one after finding (hello callbacks!)
-  Account.findOne({username: inSession }, function(err, account, count) {
-      // we can call push on toppings!
-      console.log("account: ", account);
-      if(score === "win"){
-        account.wins++;
-      }
-      else if(score === "loss"){
-        account.losses++;
-      }
-      else if(score === "tie"){
-        account.ties++;
-      }
-  	account.save(function(saveErr, saveUser, saveCount) {
-  		console.log(saveUser);
-  	});
-  });
-});
-
 //
 app.post('/api/gameroom/update', (req, res) => {
   // update one after finding (hello callbacks!)
