@@ -51,6 +51,7 @@ app.use(flash());
 const mongoose = require('mongoose');
 //create constructor/model
 const Online = mongoose.model('Online');
+const Leaderboard = mongoose.model('Leaderboard');
 
 // passport config
 let Account = require('./account');
@@ -152,6 +153,37 @@ app.post('/api/gameroom/update', (req, res) => {
       console.log("saveErr", saveErr);
   		console.log("saveUser", saveUser);
       if(saveUser){
+        console.log(saveUser);
+        console.log(saveUser._id);
+        Leaderboard.findOne({}, function(err, leaderboard) {
+          let exists = false;
+          console.log(leaderboard);
+          if(err) {
+            console.log(err);
+          }
+          //if it's not on leaderboard, push it on
+          if(leaderboard){
+            leaderboard.forEach(function(l, i, arr) {
+              if(l === saveUser._id){
+                let exists = true;
+              }
+            });
+          } else { //if there's no leaderboard make one
+            leaderboard = new Leaderboard({
+              users: []
+            });
+          }
+          if(!exists){
+            console.log("pushing to leaderboard");
+            leaderboard.users.push(saveUser._id);
+            leaderboard.save(function(saveErr, saveLeaderboard) {
+              if(saveErr){
+                console.log(saveErr);
+              }
+              console.log(saveLeaderboard);
+            });
+          }
+        });
         res.send({"wins": saveUser.wins, "losses": saveUser.losses, "ties": saveUser.ties, "gamesPlayed": saveUser.gamesPlayed});
       } else {
         res.send({'err': 'update score failed'})
@@ -177,7 +209,7 @@ app.get('/register', (req, res) => {
 
 app.post('/register', (req, res) => {
   console.log(req.method, req.path, "-", res.statusCode);
-  Account.register(new Account({ username : req.body.username }), req.body.password, function(err, account) {
+  Account.register(new Account({ username : req.body.username}), req.body.password, function(err, account) {
       if (err) {
           return res.render('register', { account : account });
       }
@@ -188,7 +220,13 @@ app.post('/register', (req, res) => {
 });
 
 app.get('/leaderboard', function (req, res) {
-  res.render('leaderboard');
+  //find the fuckin array
+  Leaderboard.findOne({}, function(err, leaderboard, count) {
+    if(err) {
+      console.log(err);
+    }
+    res.render('leaderboard', leaderboard);
+  });
 });
 
 app.get('/logout', (req, res) => {
@@ -249,7 +287,6 @@ io.on('connection', function(socket){
 				if(err) {
 					console.log(err);
 				}
-				console.log("hi");
 			});
 		});
   });
