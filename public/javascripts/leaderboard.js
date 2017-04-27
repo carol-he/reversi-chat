@@ -23,6 +23,7 @@ function main(){
   if(arr !== null){
     let row, cell;
     let ratioString;
+    //arr = arr.reverse();
     arr.forEach(function(l, i, a) {
       if(l.gamesPlayed === 0){
         l.ties = "--"

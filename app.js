@@ -10,8 +10,11 @@ const sharedsession = require("express-socket.io-session");
 const passport = require('passport')
 const FacebookStrategy = require('passport-facebook').Strategy;
 const LocalStrategy = require('passport-local').Strategy;
-const flash = require('connect-flash');
-//const exphbs = require('express-handlebars');
+
+// Load the core build.
+const _ = require('lodash/core');
+
+const sortBy = require('lodash.sortby');
 
 app.use(bodyParser.urlencoded({ extended: false }));
 
@@ -43,7 +46,6 @@ const sessionOptions = {
 app.use(session(sessionOptions));
 app.use(passport.initialize());
 app.use(passport.session());
-app.use(flash());
 // io.use(sharedsession(session, {
 //     autoSave:true
 // }));
@@ -83,7 +85,6 @@ mongoose.connect(dbconf);
 
 //sets ur game stats to 0 instead of undefined
 app.use('/gameroom', (req, res, next) => {
-  console.log("reqqwe: ", req.user);
   if(req.user){
     Account.findOne({username: req.user.username }, function(err, account, count) {
       console.log("account: ", account);
@@ -189,8 +190,14 @@ app.post('/api/gameroom/update', (req, res) => {
           //if it's not on leaderboard, push it on
           if(leaderboard){
             leaderboard.users.forEach(function(l, i, arr) {
-              if(l === saveUser._id){
-                let exists = true;
+              console.log("l: ", l);
+              console.log("savuser: ", saveUser._id);
+              console.log(l.toString());
+              console.log(saveUser._id.toString());
+
+              if(l.toString() === saveUser._id.toString()){
+                exists = true;
+                console.log("its already there");
               }
             });
           } else { //if there's no leaderboard make one
@@ -247,24 +254,35 @@ app.post('/register', (req, res) => {
 
 app.get('/leaderboard', function (req, res) {
   //find the fuckin array
+  let arrusers = [];
   Leaderboard.findOne({}, function(err, leaderboard, count) {
     if(err) {
       console.log(err);
     }
     //get actual array of users
-    let arrusers = [];
     leaderboard.users.forEach(function(u, i, arr){
-      console.log(u);
+      console.log("u", u);
+      console.log("i", i)
+      console.log(arr.length);
       Account.findOne({_id: u}, function(e, a){
         if(e){
           console.log(e);
         }
         console.log("a: ", a);
         arrusers.push(a);
+        if(i === arr.length - 1){
+          console.log("arrusers, BEFORE", arrusers);
+          arrusers = _.sortBy(arrusers, "wins");
+          arrusers = arrusers.reverse();
+          console.log("arrusers, AFTER", arrusers);
+          for(let i = 0; i < arrusers.length; i++){
+            console.log("???", arrusers[i].wins);
+          }
+          res.render('leaderboard', {arrusers: arrusers});
+        }
       });
+
     });
-    console.log("arrusers", arrusers);
-    res.render('leaderboard', {arrusers: arrusers});
   });
 });
 
