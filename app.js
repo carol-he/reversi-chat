@@ -143,7 +143,7 @@ app.get('/gameroom', (req, res) => {
     res.redirect('/login');
     console.log(req.method, req.path, "-", res.statusCode);
   }
-  inSession = req.user.username;
+  let inSession = req.user.username;
   else {
     res.render('gameroom', {inSession: req.user.username});
   }
