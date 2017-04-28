@@ -319,8 +319,6 @@ function FinishGame(){
 }
 
 function updatePlayerInfo(score){
-  console.log("hellooo");
-  //ajax shit
   const url = 'http://localhost:8080/api/gameroom/update?score=' + score + '&username=' + inSession;
   const req = new XMLHttpRequest();
   req.open('POST', url);

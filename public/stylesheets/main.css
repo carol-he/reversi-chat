@@ -1,6 +1,15 @@
 #wrapper {
     text-align: center;
 }
+#oneWin{
+    width: 500px;
+    margin-top: 30px;
+    padding: 20px;
+    height: auto;
+    display: inline-block;
+    padding-right: 30px;
+    border: none;
+}
 #anotherwrapper{
     display: inline-block;
     width: 800px;

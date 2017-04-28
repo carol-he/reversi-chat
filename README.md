@@ -86,14 +86,14 @@ An Example Online:
 6. as a non-registered or registered user, I can view the leaderboard to see who has had the most wins
 
 ## Research Topics
-* (5 points) Socket.io
-    * enables real-time bidirectional event-based communication
+* (6 points) Socket.io
+    * enables real-time bidirectional event-based communication between client and server
     * want to use this to send chat messages back and forth from client to server to client
     * want to use this to keep a list of people who are online
     * want to use this to update win/lose game data in database
 * (2 points) Integrate user authentication
     * I'm going to be using passport for user authentication
-* (2 points) Bootstrap Used
+* (1 points) Bootstrap Used
 * (1 point) LoDash used to simplify sorting objects
 10 points total out of 8 required points
 

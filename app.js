@@ -270,18 +270,54 @@ app.get('/leaderboard', function (req, res) {
         }
         console.log("a: ", a);
         arrusers.push(a);
-        if(i === arr.length - 1){
+        if(i > arr.length - 2){
           console.log("arrusers, BEFORE", arrusers);
+          //sort
+          // arrusers.filter(){
+          //
+          // }
           arrusers = _.sortBy(arrusers, "wins");
+          //have to reverse bc ascending order
           arrusers = arrusers.reverse();
+          //only show top 10 users
+          let count = 0;
+          let ten = [];
+          function getTen(x){
+            if(count < 10){
+              ten.push(x);
+              count++;
+            }
+          }
+          arrusers.map(getTen);
+          arrusers = ten;
+          //filter out users who have not played the game
+          let np = [];
+          function notPlayed(x){
+            if(x.gamesPlayed !== 0){
+              np.push(x);
+            }
+          }
+          arrusers.filter(notPlayed);
+          arrusers = np;
+          //filter users who have wins < 1
+          let suc = [];
+          function succ(x){
+            console.log("WIN");
+            if(x.wins > 0){
+              suc.push(x);
+            }
+          }
+          arrusers.filter(succ);
+          arrusers = suc;
           console.log("arrusers, AFTER", arrusers);
           for(let i = 0; i < arrusers.length; i++){
             console.log("???", arrusers[i].wins);
           }
+          arrusers = _.sortBy(arrusers, "wins");
+          arrusers = arrusers.reverse();
           res.render('leaderboard', {arrusers: arrusers});
         }
       });
-
     });
   });
 });
@@ -314,15 +350,24 @@ io.on('connection', function(socket){
     userID = msg;
 		io.emit('person is online', msg);
 		console.log("req.session.usr: ", msg);
-		const o = new Online({
-			onlineUser: msg
-		});
-		console.log(' has connected');
-		console.log("o", o);
-		o.save((err) => {
+    Online.find({onlineUser: msg}, (err, onlines) => {
 			if(err) {
-					console.log(err);
+				console.log(err);
 			}
+      if(!onlines){
+        const o = new Online({
+    			onlineUser: msg
+    		});
+    		console.log(' has connected');
+    		console.log("o", o);
+    		o.save((err) => {
+    			if(err) {
+    					console.log(err);
+    			}
+    		});
+      }
+			console.log("ONLINES", onlines);
+			//res.render('chat', {inSession: req.session.username, onlines: onlines});
 		});
 		Online.find({}, (err, onlines) => {
 			if(err) {
