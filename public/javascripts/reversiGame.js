@@ -328,7 +328,7 @@ function updatePlayerInfo(score){
       console.log("req responseText: ", req.responseText);
       const data = JSON.parse(req.responseText);
       //modify dom with new data
-      console.log(data);
+      console.log("data: ", data);
       appendMessage("---");
       appendMessage("total wins: " + data.wins);
       appendMessage("total losses: " + data.losses);
@@ -336,7 +336,7 @@ function updatePlayerInfo(score){
     }
   });
   req.addEventListener('error', function() {
-
+    console.log("errorrrr");
   });
   req.send();
 }

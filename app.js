@@ -151,7 +151,7 @@ app.get('/gameroom', (req, res) => {
 //
 app.post('/api/gameroom/update', (req, res) => {
   // update one after finding (hello callbacks!)
-  Account.findOne({username: req.user.username }, function(err, account, count) {
+  Account.findOne({username: req.query.username }, function(err, account, count) {
     console.log("account: ", account);
       if(req.query.score === "win"){
         if(!account.wins){
