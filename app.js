@@ -144,7 +144,7 @@ app.get('/gameroom', (req, res) => {
     console.log(req.method, req.path, "-", res.statusCode);
   }
   else {
-    res.render('gameroom', {inSession: req.user.username});
+    res.render('gameroom', {'inSession': req.user.username});
   }
 });
 
@@ -152,7 +152,7 @@ app.get('/api/gameroom/update', (req, res) => {
   console.log(req.method, req.path, "-", res.statusCode);
 });
 //
-app.post('api/gameroom/update', (req, res) => {
+app.post('/api/gameroom/update', (req, res) => {
   // update one after finding (hello callbacks!)
   console.log(req.method, req.path, "-", res.statusCode);
   Account.findOne({username: req.query.username }, function(err, account, count) {
