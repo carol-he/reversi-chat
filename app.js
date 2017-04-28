@@ -148,7 +148,7 @@ app.get('/gameroom', (req, res) => {
   }
 });
 
-app.get('/api/gameroom/update', (req, res) => {
+app.get('api/gameroom/update', (req, res) => {
   console.log(req.method, req.path, "-", res.statusCode);
 });
 //
