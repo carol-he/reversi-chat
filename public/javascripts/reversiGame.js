@@ -319,7 +319,7 @@ function FinishGame(){
 }
 
 function updatePlayerInfo(score){
-  const url = 'http://linserv1.cims.nyu.edu:14394/gameroom/update?score=' + score + '&username=' + inSession;
+  const url = 'http://linserv1.cims.nyu.edu:14394/api/gameroom/update?score=' + score + '&username=' + inSession;
   const req = new XMLHttpRequest();
   req.open('POST', url);
   req.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
