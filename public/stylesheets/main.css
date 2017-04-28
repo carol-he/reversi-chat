@@ -11,6 +11,9 @@
     float: left;
     padding-left: 17px;
 }
+#heading{
+  padding-top: 20px;
+}
 #chat {
     display: inline-block;
     margin-top: 5px;
@@ -80,8 +83,12 @@ input {
 #options{
     float: right;
     padding: 7px;
-    width: 130px;
+    width: 150px;
     height: 80px;
+}
+.glyphicon {
+    font-size: 30px;
+    padding: 5px;
 }
 
 #login {
@@ -127,6 +134,24 @@ margin:0px auto;
 }
 
 #leaderboard > table{
+  margin-top: 30px;
+  border-radius: 25px;
+  border: 2px solid #d7e3f7;
+  padding: 20px;
+  width: auto;
+  height: auto;
+  background-color: #d7e3f7;
+  display: inline-block;
+  padding-right: 30px;
+  border: none;
+}
+#leaderboard > table td{
+    border: 2px;
+    padding: 5px 50px;
+    border: 2px solid;
+}
+
+/*#leaderboard > table{
     display: inline-block;
     border-right: 2px solid;
 }
@@ -134,4 +159,4 @@ margin:0px auto;
     border: 2px;
     padding: 5px 50px;
     border-left: 2px solid;
-}
+}*/

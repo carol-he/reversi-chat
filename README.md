@@ -4,16 +4,15 @@
 
 Sometimes you're bored... and you just want start a conversation with a random stranger or play othello with another person who's bored. This app is the solution to your boredom!
 
-ReversiChat is a web app that will allow you to talk to anyone who logs in the server, and also play reversi with them! Users can register and login. Once they're logged in, they are automatically put in the general chat. Then they have the option of playing othello with one other player online. There's a leaderboard that keeps track of who has the most wins and win percentage in the game.
+ReversiChat is a web app that will allow you to talk to anyone who logs in the server, and also play reversi! Users can register and login. Once they're logged in, they are automatically put in the general chat. Then they have the option of playing reversi in a gameroom against a computer player. There's a leaderboard that keeps track of who has the most wins and win percentage in the game.
 
 ## Data Model
 
-The application will store Users, Games, and Leaderboard
+The application will store Accounts, Onlines, and Leaderboard
 
 * Leaderboard has multiple users (via references)
-* Games have two users (via references)
 
-An Example User:
+An Example Account:
 
 ```javascript
 {
@@ -21,6 +20,8 @@ An Example User:
   hash: // a password hash,
   email: "playa@gmail.com",
   wins: 3,
+  losses: 2,
+  ties: 5,
   gamesPlayed: 10,
   currentGameInfo: {
     currentGameId: // unique number for game,
@@ -38,16 +39,11 @@ An Example Leaderboard:
 ```
 
 
-An Example Game:
+An Example Online:
 
 ```javascript
 {
-  currentGameId: // unique number for game
-  boardState: {
-    board: // array with board info
-    turn: // whose turn it is X/O
-  }
-  players: // a reference to two user objects
+  onlineUser: // String
 }
 ```
 
@@ -86,25 +82,26 @@ An Example Game:
 2. as a user, I can log in to the site
 3. as a user, I can chat with other online users
 4. as a user, I can view those who are online to see if there's anyone I can play
-5. as a user, I can attempt to find an opponent to play
-6. as a user, I can view the leaderboard to see who has had the most wins
+5. as a user, I can play othello in gameroom
+6. as a non-registered or registered user, I can view the leaderboard to see who has had the most wins
 
 ## Research Topics
-
-* (5 points) Integrate user authentication
-    * I'm going to be using passport for user authentication
-    * And account has been made for testing; I'll email you the password
-* (4 points) Perform client side form validation using a JavaScript library
-    * to make sure email is correctly formatted
-    * possibly to make sure moves are valid?
-* (2 points) Socket.io
+* (5 points) Socket.io
     * enables real-time bidirectional event-based communication
-    * want to use this to send messages back and forth from client to server to client
-11 points total out of 8 required points
+    * want to use this to send chat messages back and forth from client to server to client
+    * want to use this to keep a list of people who are online
+    * want to use this to update win/lose game data in database
+* (2 points) Integrate user authentication
+    * I'm going to be using passport for user authentication
+* (2 points) Bootstrap Used
+* (1 point) LoDash used to simplify sorting objects
+10 points total out of 8 required points
 
 
 ## [Link to Initial Main Project File](app.js)
 
 ## Annotations / References Used
 
-1. [socket.io](https://socket.io/docs) - (add link to source code that was based on this)
+1. [socket.io](https://socket.io/docs) - https://github.com/socketio/chat-example
+2. [passport.js](http://passportjs.org/) - http://mherman.org/blog/2015/01/31/local-authentication-with-passport-and-express-4/#.WQEj41MrLfZ
+3. [lodash](https://lodash.com/docs/4.17.4)

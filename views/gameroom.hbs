@@ -3,7 +3,11 @@
 <script src='/javascripts/gameroom.js'></script>
 <div id="wrapper">
   <div id="game">
-    <a href="/">go back to main chat</a> | <a href="/logout">logout</a><br>
+    <div id="heading">
+      <a href="/chat"><span class="glyphicon glyphicon-th" aria-hidden="true"></span></a>
+      <a href="/leaderboard"><span class="glyphicon glyphicon-stats" aria-hidden="true"></span></a>
+      <a href="/logout"><span class="glyphicon glyphicon-off" aria-hidden="true"></span></a>
+    </div>
     <div class="start">
         <h1 style="padding-bottom: 8px">Reversi!</h1>
         <form method="POST" action="">
