@@ -148,9 +148,13 @@ app.get('/gameroom', (req, res) => {
   }
 });
 
+app.get('/api/gameroom/update', (req, res) => {
+  console.log(req.method, req.path, "-", res.statusCode);
+});
 //
-app.post('/api/gameroom/update', (req, res) => {
+app.post('api/gameroom/update', (req, res) => {
   // update one after finding (hello callbacks!)
+  console.log(req.method, req.path, "-", res.statusCode);
   Account.findOne({username: req.query.username }, function(err, account, count) {
     console.log("account: ", account);
       if(req.query.score === "win"){
