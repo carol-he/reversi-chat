@@ -144,11 +144,11 @@ app.get('/gameroom', (req, res) => {
     console.log(req.method, req.path, "-", res.statusCode);
   }
   else {
-    res.render('gameroom', {'inSession': req.user.username});
+    res.render('gameroom', {inSession: req.user.username});
   }
 });
 
-app.get('api/gameroom/update', (req, res) => {
+app.get('/api/gameroom/update', (req, res) => {
   console.log(req.method, req.path, "-", res.statusCode);
 });
 //
