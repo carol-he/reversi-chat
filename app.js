@@ -143,7 +143,6 @@ app.get('/gameroom', (req, res) => {
     res.redirect('/login');
     console.log(req.method, req.path, "-", res.statusCode);
   }
-  let inSession = req.user.username;
   else {
     res.render('gameroom', {inSession: req.user.username});
   }
@@ -155,6 +154,7 @@ app.get('/api/gameroom/update', (req, res) => {
 //
 app.post('/api/gameroom/update', (req, res) => {
   // update one after finding (hello callbacks!)
+  let inSession = req.user.username;
   console.log(req.method, req.path, "-", res.statusCode);
   Account.findOne({username: req.query.username }, function(err, account, count) {
     console.log("account: ", account);
