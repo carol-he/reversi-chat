@@ -231,7 +231,7 @@ function letTheComputerMove(evt){
   cellsToFlip = getCellsToFlip(board, move.row, move.col);
   board = flipCells(board, cellsToFlip);
 
-  //update shit after flipping
+  //update after flipping
   updateBoard();
   console.log(boardToString(board));
   isFull = isBoardFull(board);

@@ -154,7 +154,6 @@ app.get('/api/gameroom/update', (req, res) => {
 //
 app.post('/api/gameroom/update', (req, res) => {
   // update one after finding (hello callbacks!)
-  let inSession = req.user.username;
   console.log(req.method, req.path, "-", res.statusCode);
   Account.findOne({username: req.query.username }, function(err, account, count) {
     console.log("account: ", account);
@@ -258,7 +257,7 @@ app.post('/register', (req, res) => {
 });
 
 app.get('/leaderboard', function (req, res) {
-  //find the fuckin array
+  //find the array
   let arrusers = [];
   Leaderboard.findOne({}, function(err, leaderboard, count) {
     if(err) {
