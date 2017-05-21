@@ -1,0 +1,4 @@
+{
+  "dbconf": "mongodb://heroku_vz8jhd2k:1md2tvevsddltul2rqq9al53c0@ds149501.mlab.com:49501/heroku_vz8jhd2k",
+  "dbconflocal": "mongodb://localhost/finalprojectconfig"
+}
