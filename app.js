@@ -1,14 +1,12 @@
 const db = require( './db' );
 const express = require('express');
-const session = require('express-session');
 const app = require('express')();
 const bodyParser = require('body-parser');
 const http = require('http').Server(app);
-const bcrypt = require('bcrypt');
+//const bcrypt = require('bcrypt');
 const io = require('socket.io')(http);
-const sharedsession = require("express-socket.io-session");
 const passport = require('passport')
-const FacebookStrategy = require('passport-facebook').Strategy;
+//const FacebookStrategy = require('passport-facebook').Strategy;
 const LocalStrategy = require('passport-local').Strategy;
 
 // Load the core build.
