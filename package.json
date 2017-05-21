@@ -24,6 +24,7 @@
     "express": "^4.15.3",
     "express-handlebars": "^3.0.0",
     "handlebars": "^4.0.8",
+    "hbs": "^4.0.1",
     "lodash": "^4.17.4",
     "lodash.sortby": "^4.7.0",
     "mongoose": "^4.10.0",
