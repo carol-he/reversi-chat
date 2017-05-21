@@ -48,9 +48,9 @@ const sessionOptions = {
 app.use(session(sessionOptions));
 app.use(passport.initialize());
 app.use(passport.session());
-io.use(sharedsession(session, {
-    autoSave:true
-}));
+// io.use(sharedsession(session, {
+//     autoSave:true
+// }));
 
 //require mongoose
 const mongoose = require('mongoose');
