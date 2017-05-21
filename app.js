@@ -39,17 +39,17 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'hbs');
 
-// const sessionOptions = {
-// 	secret: 'secret cookie thang',
-// 	resave: true,
-// 	saveUninitialized: true
-// };
-// app.use(session(sessionOptions));
-// app.use(passport.initialize());
-// app.use(passport.session());
-// io.use(sharedsession(session, {
-//     autoSave:true
-// }));
+const sessionOptions = {
+	secret: 'secret cookie thang',
+	resave: true,
+	saveUninitialized: true
+};
+app.use(session(sessionOptions));
+app.use(passport.initialize());
+app.use(passport.session());
+io.use(sharedsession(session, {
+    autoSave:true
+}));
 
 //require mongoose
 const mongoose = require('mongoose');
