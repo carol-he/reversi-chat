@@ -16,17 +16,17 @@ const sortBy = require('lodash.sortby');
 
 app.use(bodyParser.urlencoded({ extended: false }));
 
-passport.use(new FacebookStrategy({
-    clientID: 1815619725423560,
-    clientSecret: "587111d5b4f123a71fcafe0f1cf4ca59",
-    callbackURL: "http://localhost:8080/auth/facebook/callback"
-  },
-  function(accessToken, refreshToken, profile, cb) {
-    User.findOrCreate({ facebookId: profile.id }, function (err, user) {
-      return cb(err, user);
-    });
-  }
-));
+// passport.use(new FacebookStrategy({
+//     clientID: 1815619725423560,
+//     clientSecret: "587111d5b4f123a71fcafe0f1cf4ca59",
+//     callbackURL: "http://localhost:8080/auth/facebook/callback"
+//   },
+//   function(accessToken, refreshToken, profile, cb) {
+//     User.findOrCreate({ facebookId: profile.id }, function (err, user) {
+//       return cb(err, user);
+//     });
+//   }
+// ));
 
 // express static setup
 const path = require('path');
