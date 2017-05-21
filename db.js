@@ -1,5 +1,4 @@
 const mongoose = require('mongoose');
-const URLSlugs = require('mongoose-url-slugs');
 const passportLocalMongoose = require('passport-local-mongoose');
 
 // Link.plugin(URLSlugs('title'));
