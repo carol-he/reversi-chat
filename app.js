@@ -65,7 +65,7 @@ passport.deserializeUser(Account.deserializeUser());
 
 //mongoose things
 // is the environment variable, NODE_ENV, set to PRODUCTION?
-if (process.env.NODE_ENV === 'PRODUCTION') {
+//if (process.env.NODE_ENV === 'PRODUCTION') {
  // if we're in PRODUCTION mode, then read the configration from a file
  // use blocking file io to do this...
  var fs = require('fs');
@@ -76,10 +76,10 @@ if (process.env.NODE_ENV === 'PRODUCTION') {
  // conenction string appropriately!
  var conf = JSON.parse(data);
  var dbconf = conf.dbconf;
-} else {
+//} else {
  // if we're not in PRODUCTION mode, then use
- dbconf = 'mongodb://localhost/chatroomproject';
-}
+// dbconf = 'mongodb://localhost/chatroomproject';
+//}
 
 mongoose.connect(dbconf);
 
