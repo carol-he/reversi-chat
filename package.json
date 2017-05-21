@@ -23,6 +23,7 @@
     "body-parser": "^1.17.2",
     "express": "^4.15.3",
     "express-handlebars": "^3.0.0",
+    "express-session": "^1.15.3",
     "handlebars": "^4.0.8",
     "hbs": "^4.0.1",
     "lodash": "^4.17.4",
