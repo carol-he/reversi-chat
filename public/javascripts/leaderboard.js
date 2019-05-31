@@ -30,7 +30,7 @@ function main(){
         ratioString = "0%"
       } else {
         let ratio = (l.wins / l.gamesPlayed) * 100;
-        ratioString = ratio + "%"
+        ratioString = ratio.toFixed(2) + "%"
         if(l.wins === 0){
           l.wins = "--"
         }
